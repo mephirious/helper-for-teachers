@@ -27,6 +27,11 @@ type (
 		Mode string
 	}
 
+	Gemini struct {
+		APIKey    string
+		ModelName string
+	}
+
 	NATSConfig struct {
 		URL string
 	}

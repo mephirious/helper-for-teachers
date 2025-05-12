@@ -13,6 +13,11 @@ type ExamCreate struct {
 	Status      string `json:"status" bson:"status"`
 }
 
+type ExamCreateAI struct {
+	Grade string `json:"grade" bson:"grade"`
+	Topic string `json:"topic" bson:"topic"`
+}
+
 type ExamUpdate struct {
 	Title       *string `json:"title" bson:"title"`
 	Description *string `json:"description" bson:"description"`

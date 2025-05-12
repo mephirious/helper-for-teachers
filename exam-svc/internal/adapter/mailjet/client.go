@@ -3,8 +3,6 @@ package mailjet
 import (
 	"fmt"
 
-	"github.com/mephirious/helper-for-teachers/services/exam-svc/config"
-
 	"github.com/mailjet/mailjet-apiv3-go/v4"
 )
 
@@ -14,13 +12,11 @@ type MailjetClient struct {
 	name   string
 }
 
-func NewMailjetClient(cfg *config.MailjetConfig) *MailjetClient {
-	client := mailjet.NewMailjetClient(cfg.API, cfg.KEY)
-
+func NewMailjetClient(client *mailjet.Client, from string, name string) *MailjetClient {
 	return &MailjetClient{
 		client: client,
-		from:   cfg.From,
-		name:   cfg.Name,
+		from:   from,
+		name:   name,
 	}
 }
 
