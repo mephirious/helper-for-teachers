@@ -200,7 +200,6 @@ func main() {
 		Status:      examResult.Status,
 		CreatedBy:   primitive.NewObjectID(), // Placeholder for actual user
 		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
 	}
 
 	// Assign IDs and ExamID to Questions
@@ -230,7 +229,7 @@ func main() {
 	for i, q := range examResult.Questions {
 		fmt.Printf("  %d. %s\n", i+1, q.QuestionText)
 		for j, opt := range q.Options {
-			optionLabel := string('A' + j)
+			optionLabel := fmt.Sprint('A' + j)
 			fmt.Printf("     %s) %s\n", optionLabel, opt)
 		}
 		fmt.Printf("     ✅ Correct Answer: %s\n", q.CorrectAnswer)
