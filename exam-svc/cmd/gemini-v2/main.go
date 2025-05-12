@@ -130,7 +130,7 @@ func printQuestions(questions []domain.Question) {
 	for i, q := range questions {
 		fmt.Printf("  %d. %s\n", i+1, q.QuestionText)
 		for j, opt := range q.Options {
-			optionLabel := string('A' + j)
+			optionLabel := fmt.Sprint('A' + j)
 			fmt.Printf("     %s) %s\n", optionLabel, opt)
 		}
 		fmt.Printf("     Correct Answer: %s\n\n", q.CorrectAnswer)
