@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type ExamQuestion struct {
+type Question struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id"`
 	ExamID        primitive.ObjectID `json:"exam_id" bson:"exam_id"`
 	QuestionText  string             `json:"question_text" bson:"question_text"`

@@ -6,7 +6,7 @@ import (
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/domain"
 )
 
-type ExamQuestionCreate struct {
+type QuestionCreate struct {
 	ExamID        string   `json:"exam_id" bson:"exam_id"`
 	QuestionText  string   `json:"question_text" bson:"question_text"`
 	Options       []string `json:"options" bson:"options"`
@@ -14,7 +14,7 @@ type ExamQuestionCreate struct {
 	Status        string   `json:"status" bson:"status"`
 }
 
-type ExamQuestionUpdate struct {
+type QuestionUpdate struct {
 	ExamID        *string   `json:"exam_id" bson:"exam_id"`
 	QuestionText  *string   `json:"question_text" bson:"question_text"`
 	Options       []*string `json:"options" bson:"options"`
@@ -22,11 +22,11 @@ type ExamQuestionUpdate struct {
 	Status        *string   `json:"status" bson:"status"`
 }
 
-type ExamQuestionPatch struct {
+type QuestionPatch struct {
 	Status *string `json:"status" bson:"status"`
 }
 
-type ExamQuestionResponse struct {
+type QuestionResponse struct {
 	ID            string    `json:"id" bson:"_id"`
 	ExamID        string    `json:"exam_id" bson:"exam_id"`
 	QuestionText  string    `json:"question_text" bson:"question_text"`
@@ -36,8 +36,8 @@ type ExamQuestionResponse struct {
 	CreatedAt     time.Time `json:"created_at" bson:"created_at"`
 }
 
-func MapExamQuestionToResponse(c domain.ExamQuestion) ExamQuestionResponse {
-	return ExamQuestionResponse{
+func MapQuestionToResponse(c domain.Question) QuestionResponse {
+	return QuestionResponse{
 		ID:            c.ID.Hex(),
 		ExamID:        c.ExamID.Hex(),
 		QuestionText:  c.QuestionText,
