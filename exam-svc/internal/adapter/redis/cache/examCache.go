@@ -24,7 +24,7 @@ func (c *ExamCache) Set(ctx context.Context, exam domain.Exam) error {
 	if err != nil {
 		return err
 	}
-	return c.client.Unwrap().Set(ctx, fmt.Sprintf(examPrefix, exam.ID.Hex()), data, 0).Err()
+	return c.client.Unwrap().Set(ctx, fmt.Sprintf(examPrefix, exam.ID.Hex()), data, c.client.TTL()).Err()
 }
 
 func (c *ExamCache) Get(ctx context.Context, id string) (domain.Exam, error) {
@@ -48,7 +48,7 @@ func (c *ExamCache) SetMany(ctx context.Context, exams []domain.Exam) error {
 		if err != nil {
 			return err
 		}
-		pipe.Set(ctx, fmt.Sprintf(examPrefix, e.ID.Hex()), data, 0)
+		pipe.Set(ctx, fmt.Sprintf(examPrefix, e.ID.Hex()), data, c.client.TTL())
 	}
 	_, err := pipe.Exec(ctx)
 	return err

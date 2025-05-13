@@ -24,7 +24,7 @@ func (c *QuestionCache) Set(ctx context.Context, question domain.Question) error
 	if err != nil {
 		return err
 	}
-	return c.client.Unwrap().Set(ctx, fmt.Sprintf(questionPrefix, question.ID.Hex()), data, 0).Err()
+	return c.client.Unwrap().Set(ctx, fmt.Sprintf(questionPrefix, question.ID.Hex()), data, c.client.TTL()).Err()
 }
 
 func (c *QuestionCache) Get(ctx context.Context, id string) (domain.Question, error) {
@@ -48,7 +48,7 @@ func (c *QuestionCache) SetMany(ctx context.Context, questions []domain.Question
 		if err != nil {
 			return err
 		}
-		pipe.Set(ctx, fmt.Sprintf(questionPrefix, q.ID.Hex()), data, 0)
+		pipe.Set(ctx, fmt.Sprintf(questionPrefix, q.ID.Hex()), data, c.client.TTL())
 	}
 	_, err := pipe.Exec(ctx)
 	return err

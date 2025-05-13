@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -10,10 +11,12 @@ import (
 type Config struct {
 	Host     string
 	Password string
+	TTL      time.Duration
 }
 
 type Client struct {
 	client *redis.Client
+	ttl    time.Duration
 }
 
 func NewClient(ctx context.Context, cfg Config) (*Client, error) {
@@ -28,7 +31,10 @@ func NewClient(ctx context.Context, cfg Config) (*Client, error) {
 		return nil, fmt.Errorf("redis ping failed: %w", err)
 	}
 
-	return &Client{client: client}, nil
+	return &Client{
+		client: client,
+		ttl:    cfg.TTL,
+	}, nil
 }
 
 func (c *Client) Close() error {
@@ -44,4 +50,8 @@ func (c *Client) Ping(ctx context.Context) error {
 
 func (c *Client) Unwrap() *redis.Client {
 	return c.client
+}
+
+func (c *Client) TTL() time.Duration {
+	return c.ttl
 }
