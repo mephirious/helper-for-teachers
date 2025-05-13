@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/gemini"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/domain"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/repository"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,13 +15,15 @@ type examUseCase struct {
 	examRepo     repository.ExamRepository
 	questionRepo repository.QuestionRepository
 	taskRepo     repository.TaskRepository
+	geminiClient *gemini.Client
 }
 
-func NewExamUseCase(examRepo repository.ExamRepository, questionRepo repository.QuestionRepository, taskRepo repository.TaskRepository) ExamUseCase {
+func NewExamUseCase(examRepo repository.ExamRepository, questionRepo repository.QuestionRepository, taskRepo repository.TaskRepository, geminiClient *gemini.Client) ExamUseCase {
 	return &examUseCase{
 		examRepo:     examRepo,
 		questionRepo: questionRepo,
 		taskRepo:     taskRepo,
+		geminiClient: geminiClient,
 	}
 }
 
@@ -116,5 +119,65 @@ func (uc *examUseCase) GetExamWithDetails(ctx context.Context, id primitive.Obje
 		UpdatedAt:   exam.UpdatedAt,
 		Tasks:       tasks,
 		Questions:   questions,
+	}, nil
+}
+
+func (uc *examUseCase) GenerateExamUsingAI(ctx context.Context, userID primitive.ObjectID, numQuestions, numTasks int, topic, grade string) (*domain.ExamDetailed, error) {
+	result, err := uc.geminiClient.GenerateExam(ctx, numQuestions, numTasks, grade, topic)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate exam using AI: %w", err)
+	}
+
+	examID := primitive.NewObjectID()
+	now := time.Now()
+
+	exam := &domain.Exam{
+		ID:          examID,
+		Title:       result.Title,
+		Description: result.Description,
+		Status:      result.Status,
+		CreatedBy:   userID,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+	}
+
+	if err := uc.examRepo.CreateExam(ctx, exam); err != nil {
+		return nil, fmt.Errorf("failed to save generated exam: %w", err)
+	}
+
+	var questions []domain.Question
+	for _, q := range result.Questions {
+		q.ID = primitive.NewObjectID()
+		q.ExamID = examID
+		q.CreatedAt = now
+
+		if err := uc.questionRepo.CreateQuestion(ctx, &q); err != nil {
+			return nil, fmt.Errorf("failed to save question: %w", err)
+		}
+		questions = append(questions, q)
+	}
+
+	var tasks []domain.Task
+	for _, t := range result.Tasks {
+		t.ID = primitive.NewObjectID()
+		t.ExamID = examID
+		t.CreatedAt = now
+
+		if err := uc.taskRepo.CreateTask(ctx, &t); err != nil {
+			return nil, fmt.Errorf("failed to save task: %w", err)
+		}
+		tasks = append(tasks, t)
+	}
+
+	return &domain.ExamDetailed{
+		ID:          exam.ID,
+		Title:       exam.Title,
+		Description: exam.Description,
+		CreatedBy:   exam.CreatedBy,
+		Status:      exam.Status,
+		CreatedAt:   exam.CreatedAt,
+		UpdatedAt:   exam.UpdatedAt,
+		Questions:   questions,
+		Tasks:       tasks,
 	}, nil
 }

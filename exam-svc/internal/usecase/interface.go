@@ -31,4 +31,5 @@ type ExamUseCase interface {
 	DeleteExam(ctx context.Context, id primitive.ObjectID) error
 	GetAllExams(ctx context.Context) ([]domain.Exam, error)
 	GetExamWithDetails(ctx context.Context, id primitive.ObjectID) (*domain.ExamDetailed, error)
+	GenerateExamUsingAI(ctx context.Context, userID primitive.ObjectID, numQuestions, numTasks int, topic, grade string) (*domain.ExamDetailed, error)
 }

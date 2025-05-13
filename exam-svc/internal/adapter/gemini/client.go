@@ -30,8 +30,8 @@ func NewClient(client *genai.Client, modelName string) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) GenerateExam(ctx context.Context, numQuestions, numTasks int) (*ExamGenResult, error) {
-	prompt := buildPrompt(numQuestions, numTasks, "1 year of university", "Triple integral")
+func (c *Client) GenerateExam(ctx context.Context, numQuestions, numTasks int, grade, topic string) (*ExamGenResult, error) {
+	prompt := buildPrompt(numQuestions, numTasks, grade, topic)
 	config := createGenerationConfig()
 
 	result, err := c.client.Models.GenerateContent(
