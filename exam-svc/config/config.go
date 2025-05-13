@@ -5,9 +5,11 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/pkg/mongo"
+	"github.com/mephirious/helper-for-teachers/services/exam-svc/pkg/redis"
 )
 
 type (
@@ -16,6 +18,8 @@ type (
 		NATS    NATSConfig
 		Server  Server
 		Mailjet MailjetConfig
+		Redis   redis.Config
+		Gemini  GeminiConfig
 	}
 
 	Server struct {
@@ -27,9 +31,8 @@ type (
 		Mode string
 	}
 
-	Gemini struct {
-		APIKey    string
-		ModelName string
+	GeminiConfig struct {
+		APIKey string
 	}
 
 	NATSConfig struct {
@@ -70,6 +73,17 @@ func New() (*Config, error) {
 	cfg.Mailjet.KEY = os.Getenv("MAILJET_SECRET_KEY")
 	cfg.Mailjet.From = os.Getenv("MAILJET_FROM_EMAIL")
 	cfg.Mailjet.Name = os.Getenv("MAILJET_FROM_NAME")
+
+	cfg.Gemini.APIKey = os.Getenv("GEMINI_API_KEY")
+
+	cfg.Redis.Host = os.Getenv("REDIS_HOST")
+	cfg.Redis.Password = os.Getenv("REDIS_PASSWORD")
+	ttlStr := getEnv("REDIS_TTL", "0")
+	ttlInt, err := strconv.Atoi(ttlStr)
+	if err != nil {
+		return nil, fmt.Errorf("invalid REDIS_TTL value: %w", err)
+	}
+	cfg.Redis.TTL = time.Duration(ttlInt) * time.Second
 
 	return &cfg, nil
 }
