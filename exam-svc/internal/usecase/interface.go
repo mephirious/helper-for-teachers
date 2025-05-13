@@ -14,3 +14,11 @@ type TaskUseCase interface {
 	GetAllTasks(ctx context.Context) ([]domain.Task, error)
 	DeleteTask(ctx context.Context, id primitive.ObjectID) error
 }
+
+type QuestionUseCase interface {
+	CreateQuestion(ctx context.Context, question *domain.Question) (*domain.Question, error)
+	GetQuestionByID(ctx context.Context, id primitive.ObjectID) (*domain.Question, error)
+	GetQuestionsByExamID(ctx context.Context, examID primitive.ObjectID) ([]domain.Question, error)
+	GetAllQuestions(ctx context.Context) ([]domain.Question, error)
+	DeleteQuestion(ctx context.Context, id primitive.ObjectID) error
+}
