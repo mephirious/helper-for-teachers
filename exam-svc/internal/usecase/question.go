@@ -52,3 +52,7 @@ func (uc *questionUseCase) GetAllQuestions(ctx context.Context) ([]domain.Questi
 func (uc *questionUseCase) DeleteQuestion(ctx context.Context, id primitive.ObjectID) error {
 	return uc.questionRepo.DeleteQuestion(ctx, id)
 }
+
+func (u *questionUseCase) UpdateQuestion(ctx context.Context, question *domain.Question) error {
+	return u.questionRepo.UpdateQuestion(ctx, question)
+}

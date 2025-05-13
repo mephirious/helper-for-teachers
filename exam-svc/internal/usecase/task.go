@@ -53,3 +53,7 @@ func (uc *taskUseCase) GetAllTasks(ctx context.Context) ([]domain.Task, error) {
 func (uc *taskUseCase) DeleteTask(ctx context.Context, id primitive.ObjectID) error {
 	return uc.taskRepo.DeleteTask(ctx, id)
 }
+
+func (u *taskUseCase) UpdateTask(ctx context.Context, task *domain.Task) error {
+	return u.taskRepo.UpdateTask(ctx, task)
+}

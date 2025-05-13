@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/domain"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/repository/dao"
@@ -74,6 +75,26 @@ func (r *taskRepository) GetAllTasks(ctx context.Context) ([]domain.Task, error)
 		tasks = append(tasks, *daoTask.ToDomainTask())
 	}
 	return tasks, nil
+}
+
+func (r *taskRepository) UpdateTask(ctx context.Context, task *domain.Task) error {
+	update := bson.M{}
+	if task.TaskType != "" {
+		update["task_type"] = task.TaskType
+	}
+	if task.Description != "" {
+		update["description"] = task.Description
+	}
+	if task.Score != 0 {
+		update["score"] = task.Score
+	}
+
+	if len(update) == 0 {
+		return fmt.Errorf("no fields to update")
+	}
+
+	_, err := r.collection.UpdateOne(ctx, bson.M{"_id": task.ID}, bson.M{"$set": update})
+	return err
 }
 
 func (r *taskRepository) DeleteTask(ctx context.Context, id primitive.ObjectID) error {

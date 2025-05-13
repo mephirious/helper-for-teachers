@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/domain"
@@ -76,6 +77,29 @@ func (r *questionRepository) GetAllQuestions(ctx context.Context) ([]domain.Ques
 		questions = append(questions, *q.ToDomainQuestion())
 	}
 	return questions, nil
+}
+
+func (r *questionRepository) UpdateQuestion(ctx context.Context, question *domain.Question) error {
+	update := bson.M{}
+	if question.QuestionText != "" {
+		update["question_text"] = question.QuestionText
+	}
+	if len(question.Options) > 0 {
+		update["options"] = question.Options
+	}
+	if question.CorrectAnswer != "" {
+		update["correct_answer"] = question.CorrectAnswer
+	}
+	if question.Status != "" {
+		update["status"] = question.Status
+	}
+
+	if len(update) == 0 {
+		return fmt.Errorf("no fields to update")
+	}
+
+	_, err := r.collection.UpdateOne(ctx, bson.M{"_id": question.ID}, bson.M{"$set": update})
+	return err
 }
 
 func (r *questionRepository) DeleteQuestion(ctx context.Context, id primitive.ObjectID) error {

@@ -3,11 +3,14 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/gemini"
+	nats "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/nats"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/domain"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/repository"
+	pb "github.com/mephirious/helper-for-teachers/services/exam-svc/proto"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -16,6 +19,7 @@ type examUseCase struct {
 	questionRepo repository.QuestionRepository
 	taskRepo     repository.TaskRepository
 	geminiClient *gemini.Client
+	publisher    nats.ExamEventProducer
 }
 
 func NewExamUseCase(examRepo repository.ExamRepository, questionRepo repository.QuestionRepository, taskRepo repository.TaskRepository, geminiClient *gemini.Client) ExamUseCase {
@@ -35,6 +39,11 @@ func (uc *examUseCase) CreateExam(ctx context.Context, exam *domain.Exam) (*doma
 	if err := uc.examRepo.CreateExam(ctx, exam); err != nil {
 		return nil, fmt.Errorf("failed to create exam: %w", err)
 	}
+
+	if err := uc.publisher.Push(ctx, exam, pb.ExamEventType_CREATED); err != nil {
+		log.Printf("Failed to push create event to NATS: %v", err)
+	}
+
 	return exam, nil
 }
 
@@ -54,11 +63,66 @@ func (uc *examUseCase) GetExamsByUser(ctx context.Context, userID primitive.Obje
 }
 
 func (uc *examUseCase) UpdateExamStatus(ctx context.Context, id primitive.ObjectID, status string) error {
-	return uc.examRepo.UpdateExamStatus(ctx, id, status)
+	exam, err := uc.examRepo.GetExamByID(ctx, id)
+	if err != nil {
+		return err
+	}
+	if exam == nil {
+		return fmt.Errorf("exam not found")
+	}
+
+	exam.Status = status
+	exam.UpdatedAt = time.Now()
+
+	if err := uc.examRepo.UpdateExamStatus(ctx, id, status); err != nil {
+		return err
+	}
+
+	if err := uc.publisher.Push(ctx, exam, pb.ExamEventType_UPDATED); err != nil {
+		log.Printf("Failed to push update event to NATS: %v", err)
+	}
+
+	return nil
+}
+
+func (uc *examUseCase) UpdateExam(ctx context.Context, exam *domain.Exam) error {
+	exam.UpdatedAt = time.Now()
+
+	if err := uc.examRepo.UpdateExam(ctx, exam); err != nil {
+		return err
+	}
+
+	updated, err := uc.examRepo.GetExamByID(ctx, exam.ID)
+	if err != nil || updated == nil {
+		log.Printf("Failed to reload exam for NATS publish: %v", err)
+		return nil
+	}
+
+	if err := uc.publisher.Push(ctx, updated, pb.ExamEventType_UPDATED); err != nil {
+		log.Printf("Failed to push update event to NATS: %v", err)
+	}
+
+	return nil
 }
 
 func (uc *examUseCase) DeleteExam(ctx context.Context, id primitive.ObjectID) error {
-	return uc.examRepo.DeleteExam(ctx, id)
+	exam, err := uc.examRepo.GetExamByID(ctx, id)
+	if err != nil {
+		return err
+	}
+	if exam == nil {
+		return fmt.Errorf("exam not found")
+	}
+
+	if err := uc.examRepo.DeleteExam(ctx, id); err != nil {
+		return err
+	}
+
+	if err := uc.publisher.Push(ctx, exam, pb.ExamEventType_DELETED); err != nil {
+		log.Printf("Failed to push delete event to NATS: %v", err)
+	}
+
+	return nil
 }
 
 func (uc *examUseCase) GetAllExams(ctx context.Context) ([]domain.Exam, error) {

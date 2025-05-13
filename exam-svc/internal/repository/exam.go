@@ -69,6 +69,27 @@ func (r *examRepository) UpdateExamStatus(ctx context.Context, id primitive.Obje
 	return err
 }
 
+func (r *examRepository) UpdateExam(ctx context.Context, exam *domain.Exam) error {
+	update := bson.M{}
+	if exam.Title != "" {
+		update["title"] = exam.Title
+	}
+	if exam.Description != "" {
+		update["description"] = exam.Description
+	}
+	if exam.Status != "" {
+		update["status"] = exam.Status
+	}
+	update["updated_at"] = time.Now()
+
+	if len(update) == 0 {
+		return fmt.Errorf("no fields to update")
+	}
+
+	_, err := r.collection.UpdateOne(ctx, bson.M{"_id": exam.ID}, bson.M{"$set": update})
+	return err
+}
+
 func (r *examRepository) DeleteExam(ctx context.Context, id primitive.ObjectID) error {
 	session, err := r.collection.Database().Client().StartSession()
 	if err != nil {
