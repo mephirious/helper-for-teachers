@@ -44,7 +44,6 @@ func main() {
 		log.Fatalf("Failed to create Gemini client: %v\n", err)
 	}
 
-	// Initialize Gemini client
 	apiKey := os.Getenv("GEMINI_API_KEY")
 	if apiKey == "" {
 		log.Fatal("GEMINI_API_KEY not set in environment or .env file")
@@ -56,18 +55,15 @@ func main() {
 		log.Fatalf("Failed to create Gemini client: %v\n", err)
 	}
 
-	// Generate exam content
-	result, err := client.GenerateExam(ctx, numQuestions, numTasks)
+	result, err := client.GenerateExam(ctx, numQuestions, numTasks, "5 grade", "basic math")
 	if err != nil {
 		log.Fatalf("Failed to generate exam: %v\n", err)
 	}
 
-	// Create MongoDB documents
 	exam := createExam(result)
 	questions := createQuestions(result.Questions, exam.ID)
 	tasks := createTasks(result.Tasks, exam.ID)
 
-	// Output results
 	printExam(exam)
 	printQuestions(questions)
 	printTasks(tasks)

@@ -86,12 +86,10 @@ Generate a JSON object for an academic exam with the following structure:
 }
 
 func main() {
-	// Load .env file
 	if err := godotenv.Load(); err != nil {
 		log.Printf("Warning: Error loading .env file: %v\n", err)
 	}
 
-	// Parse command-line arguments
 	if len(os.Args) < 3 {
 		log.Fatal("Usage: go run main.go <num_questions> <num_tasks>")
 	}
@@ -104,7 +102,6 @@ func main() {
 		log.Fatalf("Invalid number of tasks: %v\n", err)
 	}
 
-	// Initialize Gemini API client
 	ctx := context.Background()
 	apiKey := os.Getenv("GEMINI_API_KEY")
 	if apiKey == "" {
@@ -118,9 +115,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create Gemini client: %v\n", err)
 	}
-	//defer client.Close()
 
-	// Build prompt and generate content
 	prompt := buildPrompt(numQuestions, numTasks)
 
 	config := &genai.GenerateContentConfig{
@@ -174,7 +169,6 @@ func main() {
 		log.Fatalf("Failed to generate content: %v\n", err)
 	}
 
-	// Extract and clean JSON response
 	rawJSON := result.Text()
 	rawJSON = strings.TrimSpace(rawJSON)
 	if strings.HasPrefix(rawJSON, "```json") {
@@ -183,41 +177,36 @@ func main() {
 		rawJSON = strings.TrimSpace(rawJSON)
 	}
 
-	fmt.Println("🧪 Cleaned JSON:")
+	fmt.Println("Cleaned JSON:")
 	fmt.Println(rawJSON)
 
-	// Decode JSON into ExamGenResult
 	var examResult ExamGenResult
 	if err := json.Unmarshal([]byte(rawJSON), &examResult); err != nil {
 		log.Fatalf("Error decoding JSON: %v\n", err)
 	}
 
-	// Create Exam with MongoDB ObjectIDs
 	exam := Exam{
 		ID:          primitive.NewObjectID(),
 		Title:       examResult.Title,
 		Description: examResult.Description,
 		Status:      examResult.Status,
-		CreatedBy:   primitive.NewObjectID(), // Placeholder for actual user
+		CreatedBy:   primitive.NewObjectID(),
 		CreatedAt:   time.Now(),
 	}
 
-	// Assign IDs and ExamID to Questions
 	for i := range examResult.Questions {
 		examResult.Questions[i].ID = primitive.NewObjectID()
 		examResult.Questions[i].ExamID = exam.ID
 		examResult.Questions[i].CreatedAt = time.Now()
 	}
 
-	// Assign IDs and ExamID to Tasks
 	for i := range examResult.Tasks {
 		examResult.Tasks[i].ID = primitive.NewObjectID()
 		examResult.Tasks[i].ExamID = exam.ID
 		examResult.Tasks[i].CreatedAt = time.Now()
 	}
 
-	// Output results
-	fmt.Printf("✅ Exam:\n")
+	fmt.Printf("Exam:\n")
 	fmt.Printf("Title       : %s\n", exam.Title)
 	fmt.Printf("Description : %s\n", exam.Description)
 	fmt.Printf("Status      : %s\n", exam.Status)
@@ -225,7 +214,7 @@ func main() {
 	fmt.Printf("Created At  : %s\n", exam.CreatedAt.Format("2006-01-02 15:04:05"))
 	fmt.Println()
 
-	fmt.Printf("📝 Questions (%d):\n", len(examResult.Questions))
+	fmt.Printf("Questions (%d):\n", len(examResult.Questions))
 	for i, q := range examResult.Questions {
 		fmt.Printf("  %d. %s\n", i+1, q.QuestionText)
 		for j, opt := range q.Options {
@@ -236,7 +225,7 @@ func main() {
 		fmt.Println()
 	}
 
-	fmt.Printf("📋 Tasks (%d):\n", len(examResult.Tasks))
+	fmt.Printf("Tasks (%d):\n", len(examResult.Tasks))
 	for i, t := range examResult.Tasks {
 		fmt.Printf("  %d. Type: %s\n", i+1, t.TaskType)
 		fmt.Printf("     Description: %s\n", t.Description)
