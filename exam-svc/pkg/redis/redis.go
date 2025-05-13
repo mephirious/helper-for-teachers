@@ -9,9 +9,9 @@ import (
 )
 
 type Config struct {
-	Host     string
-	Password string
-	TTL      time.Duration
+	Host     string        `env:"REDIS_HOST"`
+	Password string        `env:"REDIS_PASSWORD"`
+	TTL      time.Duration `env:"REDIS_TTL"`
 }
 
 type Client struct {
