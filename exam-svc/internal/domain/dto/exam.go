@@ -41,6 +41,18 @@ type ExamResponse struct {
 	UpdatedAt   time.Time `json:"updated_at" bson:"updated_at"`
 }
 
+type ExamDetailedResponse struct {
+	ID          string             `json:"id"`
+	Title       string             `json:"title"`
+	Description string             `json:"description"`
+	CreatedBy   string             `json:"created_by"`
+	Status      string             `json:"status"`
+	CreatedAt   time.Time          `json:"created_at"`
+	UpdatedAt   time.Time          `json:"updated_at"`
+	Tasks       []TaskResponse     `json:"tasks"`
+	Questions   []QuestionResponse `json:"questions"`
+}
+
 func MapExamToResponse(c domain.Exam) ExamResponse {
 	return ExamResponse{
 		ID:          c.ID.Hex(),

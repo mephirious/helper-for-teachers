@@ -22,3 +22,13 @@ type QuestionUseCase interface {
 	GetAllQuestions(ctx context.Context) ([]domain.Question, error)
 	DeleteQuestion(ctx context.Context, id primitive.ObjectID) error
 }
+
+type ExamUseCase interface {
+	CreateExam(ctx context.Context, exam *domain.Exam) (*domain.Exam, error)
+	GetExamByID(ctx context.Context, id primitive.ObjectID) (*domain.Exam, error)
+	GetExamsByUser(ctx context.Context, userID primitive.ObjectID) ([]domain.Exam, error)
+	UpdateExamStatus(ctx context.Context, id primitive.ObjectID, status string) error
+	DeleteExam(ctx context.Context, id primitive.ObjectID) error
+	GetAllExams(ctx context.Context) ([]domain.Exam, error)
+	GetExamWithDetails(ctx context.Context, id primitive.ObjectID) (*domain.ExamDetailed, error)
+}

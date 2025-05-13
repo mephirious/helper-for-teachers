@@ -21,7 +21,7 @@ func NewTaskRepository(db *mongo.Database) TaskRepository {
 }
 
 func (r *taskRepository) CreateTask(ctx context.Context, task *domain.Task) error {
-	taskDAO := dao.FromDomain(task)
+	taskDAO := dao.FromDomainTask(task)
 	_, err := r.collection.InsertOne(ctx, taskDAO)
 	return err
 }
@@ -35,7 +35,7 @@ func (r *taskRepository) GetTaskByID(ctx context.Context, id primitive.ObjectID)
 		}
 		return nil, err
 	}
-	return taskDAO.ToDomain(), nil
+	return taskDAO.ToDomainTask(), nil
 }
 
 func (r *taskRepository) GetTasksByExamID(ctx context.Context, examID primitive.ObjectID) ([]domain.Task, error) {
@@ -52,7 +52,7 @@ func (r *taskRepository) GetTasksByExamID(ctx context.Context, examID primitive.
 
 	tasks := make([]domain.Task, 0, len(taskDAOs))
 	for _, daoTask := range taskDAOs {
-		tasks = append(tasks, *daoTask.ToDomain())
+		tasks = append(tasks, *daoTask.ToDomainTask())
 	}
 	return tasks, nil
 }
@@ -71,7 +71,7 @@ func (r *taskRepository) GetAllTasks(ctx context.Context) ([]domain.Task, error)
 
 	tasks := make([]domain.Task, 0, len(taskDAOs))
 	for _, daoTask := range taskDAOs {
-		tasks = append(tasks, *daoTask.ToDomain())
+		tasks = append(tasks, *daoTask.ToDomainTask())
 	}
 	return tasks, nil
 }

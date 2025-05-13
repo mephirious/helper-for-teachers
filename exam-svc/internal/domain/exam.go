@@ -15,3 +15,15 @@ type Exam struct {
 	CreatedAt   time.Time          `json:"created_at" bson:"created_at"`
 	UpdatedAt   time.Time          `json:"updated_at" bson:"updated_at"`
 }
+
+type ExamDetailed struct {
+	ID          primitive.ObjectID `json:"id"`
+	Title       string             `json:"title"`
+	Description string             `json:"description"`
+	CreatedBy   primitive.ObjectID `json:"created_by"`
+	Status      string             `json:"status"`
+	CreatedAt   time.Time          `json:"created_at"`
+	UpdatedAt   time.Time          `json:"updated_at"`
+	Tasks       []Task             `json:"tasks"`
+	Questions   []Question         `json:"questions"`
+}

@@ -16,7 +16,7 @@ type Task struct {
 	CreatedAt   time.Time          `bson:"created_at"`
 }
 
-func (t *Task) ToDomain() *domain.Task {
+func (t *Task) ToDomainTask() *domain.Task {
 	return &domain.Task{
 		ID:          t.ID,
 		ExamID:      t.ExamID,
@@ -27,7 +27,7 @@ func (t *Task) ToDomain() *domain.Task {
 	}
 }
 
-func FromDomain(task *domain.Task) *Task {
+func FromDomainTask(task *domain.Task) *Task {
 	return &Task{
 		ID:          task.ID,
 		ExamID:      task.ExamID,
