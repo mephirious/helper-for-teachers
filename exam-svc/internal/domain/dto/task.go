@@ -30,7 +30,7 @@ type TaskResponse struct {
 	TaskType    string    `json:"task_type" bson:"task_type"`
 	Description string    `json:"description" bson:"description"`
 	Score       float32   `json:"score" bson:"score"`
-	CreatedAt   time.Time `json:"created_At" bson:"created_At"`
+	CreatedAt   time.Time `json:"created_at" bson:"created_at"`
 }
 
 func MapTaskToResponse(c domain.Task) TaskResponse {
