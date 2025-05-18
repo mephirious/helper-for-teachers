@@ -26,3 +26,7 @@ const (
 	LessonCompleted
 	LessonCanceled
 )
+
+func (s LessonStatus) String() string {
+	return [...]string{"planned", "in_progress", "completed", "canceled"}[s]
+}
