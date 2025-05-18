@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"net"
+	"os"
 
 	"event-svc/internal/adapters/inbound/grpc"
 	"event-svc/internal/adapters/outbound/repository/postgres"
@@ -15,38 +16,59 @@ import (
 )
 
 func main() {
-	// Initialize dependencies
-	db := initDB()
+	// Initialize database connection
+	db, err := initDB()
+	if err != nil {
+		log.Fatalf("failed to initialize database: %v", err)
+	}
+	defer db.Close()
 
-	// Repositories
+	// Initialize repositories
 	lessonRepo := postgres.NewLessonRepository(db)
 	taskRepo := postgres.NewTaskRepository(db)
 	scheduleRepo := postgres.NewScheduleRepository(db)
 
-	// Use cases
+	// Initialize use cases
 	lessonUC := lesson.NewLessonUseCase(lessonRepo)
 	taskUC := task.NewTaskUseCase(taskRepo)
 	scheduleUC := schedule.NewScheduleUseCase(scheduleRepo)
 
-	// gRPC Server
+	// Create gRPC server
 	grpcServer := grpc.NewServer()
 	eventService := grpc.NewEventServiceServer(lessonUC, taskUC, scheduleUC)
 	eventsv1.RegisterEventServiceServer(grpcServer, eventService)
 
 	// Start server
-	lis, err := net.Listen("tcp", ":50051")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "50051"
+	}
+
+	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	log.Println("Server started on port 50051")
+	log.Printf("Server started on port %s", port)
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
 }
 
-func initDB() *sql.DB {
-	// Initialize database connection
-	// return sql.Open("postgres", "your-connection-string")
-	return nil
+func initDB() (*sql.DB, error) {
+	connStr := os.Getenv("DB_CONNECTION_STRING")
+	if connStr == "" {
+		connStr = "postgres://user:password@localhost:5432/events?sslmode=disable"
+	}
+
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := db.Ping(); err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }
