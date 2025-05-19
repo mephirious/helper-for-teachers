@@ -32,6 +32,6 @@ func convertLessonToProto(lesson *model.Lesson) *eventsv1.Lesson {
 		MeetingUrl: *lesson.MeetingURL,
 		Classroom:  lesson.Classroom,
 		IsOnline:   lesson.IsOnline,
-		Status:     eventspb.LessonStatus,
+		Status:     eventsv1.LessonStatus(lesson.Status),
 	}
 }

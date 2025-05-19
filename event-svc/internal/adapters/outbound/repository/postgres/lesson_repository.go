@@ -1,11 +1,10 @@
-// lesson_repository.go
 package postgres
 
 import (
 	"context"
 	"database/sql"
 
-	"github.com/yourproject/event-svc/internal/domain/model"
+	"event-svc/internal/domain/model"
 )
 
 type LessonRepository struct {

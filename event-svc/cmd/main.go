@@ -1,27 +1,37 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net"
 	"os"
 
 	"event-svc/internal/adapters/inbound/grpc"
 	"event-svc/internal/adapters/outbound/repository/postgres"
-	"event-svc/internal/app/lesson"
-	"event-svc/internal/app/schedule"
+	schedule "event-svc/internal/app/lesson"
+	task "event-svc/internal/app/schedule"
 	"event-svc/internal/app/task"
+	config "event-svc/pkg/config"
 
+	eventsv1 "github.com/suyundykovv/margulan-protos/gen/go/events/v1"
+
+	"github.com/nats-io/nats.go"
 	"google.golang.org/grpc"
 )
 
 func main() {
-	// Initialize database connection
-	db, err := initDB()
+	cfg := config.Load()
+
+	db, err := config.InitDB()
 	if err != nil {
-		log.Fatalf("failed to initialize database: %v", err)
+		log.Fatalf("Failed to connect to database: %v", err)
 	}
 	defer db.Close()
+
+	nc, err := nats.Connect(cfg.NATS.URL, 5, 5)
+	if err != nil {
+		log.Fatalf("Failed to connect to NATS: %v", err)
+	}
+	defer nc.Close()
 
 	// Initialize repositories
 	lessonRepo := postgres.NewLessonRepository(db)
@@ -53,22 +63,4 @@ func main() {
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
-}
-
-func initDB() (*sql.DB, error) {
-	connStr := os.Getenv("DB_CONNECTION_STRING")
-	if connStr == "" {
-		connStr = "postgres://user:password@localhost:5432/events?sslmode=disable"
-	}
-
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := db.Ping(); err != nil {
-		return nil, err
-	}
-
-	return db, nil
 }

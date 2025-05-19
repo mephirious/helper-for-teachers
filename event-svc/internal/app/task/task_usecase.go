@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/yourproject/event-svc/internal/domain/model"
-	"github.com/yourproject/event-svc/internal/ports/outbound/repository"
+	"event-svc/internal/domain/model"
+	"event-svc/internal/ports/outbound/repository"
 )
 
 type TaskUseCase struct {
