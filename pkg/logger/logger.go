@@ -41,12 +41,19 @@ func New(cfg Config) *Logger {
 			}
 			if a.Key == slog.SourceKey {
 				src := a.Value.String()
-				// Trim until root path
-				// fmt.Printf("source path:`%s`   ", cfg.SourceFolder)
-				if startIndex := strings.Index(src, cfg.SourceFolder); startIndex >= 0 {
-					a.Value = slog.StringValue(src[startIndex+len(cfg.SourceFolder)+1 : len(src)-1])
+
+				// Find the last occurrence of root path
+				if startIndex := strings.LastIndex(src, cfg.SourceFolder); startIndex >= 0 {
+					trimmed := src[startIndex+len(cfg.SourceFolder)+1:]
+
+					// Fix " 74}" → ":74"
+					trimmed = strings.Replace(trimmed, " ", ":", 1)
+					trimmed = strings.TrimRight(trimmed, " }")
+
+					a.Value = slog.StringValue(trimmed)
 				}
 			}
+
 			return a
 		},
 	}
