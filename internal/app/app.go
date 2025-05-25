@@ -46,7 +46,7 @@ func New(ctx context.Context, cfg *config.Config, log *logger.Logger) (*App, err
 		return nil, errors.New("Server address empty")
 	}
 
-	log.Info("Initializing infra clients")
+	log.Info("Initializing infra clients...")
 
 	mongoClient, err := mongopkg.NewClient(ctx, mongopkg.Config(cfg.Mongo))
 	if err != nil {
