@@ -1,16 +1,12 @@
-#!/bin/bash
-
 GRPC_ADDR=${GRPC_ADDR:-"localhost:4001"}
 TMP_DIR="/tmp/exam_ids"
 mkdir -p "$TMP_DIR"
 
-# Проверка grpcurl
 if ! command -v grpcurl &> /dev/null; then
   echo "❌ grpcurl не найден. Установи: go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest"
   exit 1
 fi
 
-# Проверка jq
 if ! command -v jq &> /dev/null; then
   echo "❌ jq не найден. Установи: sudo apt install jq"
   exit 1
@@ -18,7 +14,6 @@ fi
 
 TIMESTAMP=$(date +%s)
 
-# Вспомогательная функция
 call() {
   local method=$1
   local data=$2
@@ -46,7 +41,7 @@ EOF
 )
 
 case "$1" in
-  1) # CreateExam
+  1) 
     payload=$(cat <<EOF
 {
   "exam": {
@@ -93,7 +88,7 @@ EOF
 EOF
 )" ;;
 
-  10) # CreateTask
+  10) 
     payload=$(cat <<EOF
 {
   "task": {
@@ -127,7 +122,7 @@ EOF
 )" ;;
   15) call DeleteTask "{\"id\":\"6838f2b05293c5a90799ac9a\"}" ;;
 
-  16) # CreateQuestion
+  16)
     payload=$(cat <<EOF
 {
   "question": {
