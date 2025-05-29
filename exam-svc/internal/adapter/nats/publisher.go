@@ -33,7 +33,7 @@ func (p *ExamEventProducer) Push(ctx context.Context, exam *domain.Exam, eventTy
 	ctx, cancel := context.WithTimeout(ctx, PushTimeout)
 	defer cancel()
 
-	if eventType == pb.ExamEventType_CREATED && exam.Title == "" {
+	if eventType == pb.ExamEventType_EXAM_CREATED && exam.Title == "" {
 		return fmt.Errorf("missing title for CREATED exam event")
 	}
 

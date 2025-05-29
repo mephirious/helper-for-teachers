@@ -53,7 +53,7 @@ func (uc *examUseCase) CreateExam(ctx context.Context, exam *domain.Exam) (*doma
 
 	uc.cache.ExamCache.Set(*exam)
 
-	if err := uc.publisher.Push(ctx, exam, pb.ExamEventType_CREATED); err != nil {
+	if err := uc.publisher.Push(ctx, exam, pb.ExamEventType_EXAM_CREATED); err != nil {
 		log.Printf("Failed to push create event to NATS: %v", err)
 	}
 
@@ -100,7 +100,7 @@ func (uc *examUseCase) UpdateExamStatus(ctx context.Context, id primitive.Object
 
 	uc.cache.ExamCache.Set(*exam)
 
-	if err := uc.publisher.Push(ctx, exam, pb.ExamEventType_UPDATED); err != nil {
+	if err := uc.publisher.Push(ctx, exam, pb.ExamEventType_EXAM_UPDATED); err != nil {
 		log.Printf("Failed to push update event to NATS: %v", err)
 	}
 
@@ -122,7 +122,7 @@ func (uc *examUseCase) UpdateExam(ctx context.Context, exam *domain.Exam) error 
 
 	uc.cache.ExamCache.Set(*updated)
 
-	if err := uc.publisher.Push(ctx, updated, pb.ExamEventType_UPDATED); err != nil {
+	if err := uc.publisher.Push(ctx, updated, pb.ExamEventType_EXAM_UPDATED); err != nil {
 		log.Printf("Failed to push update event to NATS: %v", err)
 	}
 
@@ -144,7 +144,7 @@ func (uc *examUseCase) DeleteExam(ctx context.Context, id primitive.ObjectID) er
 
 	uc.cache.ExamCache.Delete(id.Hex())
 
-	if err := uc.publisher.Push(ctx, exam, pb.ExamEventType_DELETED); err != nil {
+	if err := uc.publisher.Push(ctx, exam, pb.ExamEventType_EXAM_DELETED); err != nil {
 		log.Printf("Failed to push delete event to NATS: %v", err)
 	}
 

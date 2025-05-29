@@ -26,22 +26,22 @@ const (
 type ExamEventType int32
 
 const (
-	ExamEventType_CREATED ExamEventType = 0
-	ExamEventType_UPDATED ExamEventType = 1
-	ExamEventType_DELETED ExamEventType = 2
+	ExamEventType_EXAM_CREATED ExamEventType = 0
+	ExamEventType_EXAM_UPDATED ExamEventType = 1
+	ExamEventType_EXAM_DELETED ExamEventType = 2
 )
 
 // Enum value maps for ExamEventType.
 var (
 	ExamEventType_name = map[int32]string{
-		0: "CREATED",
-		1: "UPDATED",
-		2: "DELETED",
+		0: "EXAM_CREATED",
+		1: "EXAM_UPDATED",
+		2: "EXAM_DELETED",
 	}
 	ExamEventType_value = map[string]int32{
-		"CREATED": 0,
-		"UPDATED": 1,
-		"DELETED": 2,
+		"EXAM_CREATED": 0,
+		"EXAM_UPDATED": 1,
+		"EXAM_DELETED": 2,
 	}
 )
 
@@ -72,6 +72,1722 @@ func (ExamEventType) EnumDescriptor() ([]byte, []int) {
 	return file_exam_proto_rawDescGZIP(), []int{0}
 }
 
+type Task struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ExamId        string                 `protobuf:"bytes,2,opt,name=exam_id,json=examId,proto3" json:"exam_id,omitempty"`
+	TaskType      string                 `protobuf:"bytes,3,opt,name=task_type,json=taskType,proto3" json:"task_type,omitempty"`
+	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	Score         float32                `protobuf:"fixed32,5,opt,name=score,proto3" json:"score,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Task) Reset() {
+	*x = Task{}
+	mi := &file_exam_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Task) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Task) ProtoMessage() {}
+
+func (x *Task) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Task.ProtoReflect.Descriptor instead.
+func (*Task) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Task) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Task) GetExamId() string {
+	if x != nil {
+		return x.ExamId
+	}
+	return ""
+}
+
+func (x *Task) GetTaskType() string {
+	if x != nil {
+		return x.TaskType
+	}
+	return ""
+}
+
+func (x *Task) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *Task) GetScore() float32 {
+	if x != nil {
+		return x.Score
+	}
+	return 0
+}
+
+func (x *Task) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type Question struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ExamId        string                 `protobuf:"bytes,2,opt,name=exam_id,json=examId,proto3" json:"exam_id,omitempty"`
+	QuestionText  string                 `protobuf:"bytes,3,opt,name=question_text,json=questionText,proto3" json:"question_text,omitempty"`
+	Options       []string               `protobuf:"bytes,4,rep,name=options,proto3" json:"options,omitempty"`
+	CorrectAnswer string                 `protobuf:"bytes,5,opt,name=correct_answer,json=correctAnswer,proto3" json:"correct_answer,omitempty"`
+	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Question) Reset() {
+	*x = Question{}
+	mi := &file_exam_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Question) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Question) ProtoMessage() {}
+
+func (x *Question) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Question.ProtoReflect.Descriptor instead.
+func (*Question) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Question) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Question) GetExamId() string {
+	if x != nil {
+		return x.ExamId
+	}
+	return ""
+}
+
+func (x *Question) GetQuestionText() string {
+	if x != nil {
+		return x.QuestionText
+	}
+	return ""
+}
+
+func (x *Question) GetOptions() []string {
+	if x != nil {
+		return x.Options
+	}
+	return nil
+}
+
+func (x *Question) GetCorrectAnswer() string {
+	if x != nil {
+		return x.CorrectAnswer
+	}
+	return ""
+}
+
+func (x *Question) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *Question) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type Exam struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	CreatedBy     string                 `protobuf:"bytes,4,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	Status        string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Exam) Reset() {
+	*x = Exam{}
+	mi := &file_exam_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Exam) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Exam) ProtoMessage() {}
+
+func (x *Exam) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Exam.ProtoReflect.Descriptor instead.
+func (*Exam) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Exam) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Exam) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *Exam) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *Exam) GetCreatedBy() string {
+	if x != nil {
+		return x.CreatedBy
+	}
+	return ""
+}
+
+func (x *Exam) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *Exam) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Exam) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+type ExamDetailed struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	CreatedBy     string                 `protobuf:"bytes,4,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	Status        string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Tasks         []*Task                `protobuf:"bytes,8,rep,name=tasks,proto3" json:"tasks,omitempty"`
+	Questions     []*Question            `protobuf:"bytes,9,rep,name=questions,proto3" json:"questions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExamDetailed) Reset() {
+	*x = ExamDetailed{}
+	mi := &file_exam_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExamDetailed) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExamDetailed) ProtoMessage() {}
+
+func (x *ExamDetailed) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExamDetailed.ProtoReflect.Descriptor instead.
+func (*ExamDetailed) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ExamDetailed) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ExamDetailed) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *ExamDetailed) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *ExamDetailed) GetCreatedBy() string {
+	if x != nil {
+		return x.CreatedBy
+	}
+	return ""
+}
+
+func (x *ExamDetailed) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *ExamDetailed) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *ExamDetailed) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *ExamDetailed) GetTasks() []*Task {
+	if x != nil {
+		return x.Tasks
+	}
+	return nil
+}
+
+func (x *ExamDetailed) GetQuestions() []*Question {
+	if x != nil {
+		return x.Questions
+	}
+	return nil
+}
+
+type CreateTaskRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Task          *Task                  `protobuf:"bytes,1,opt,name=task,proto3" json:"task,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateTaskRequest) Reset() {
+	*x = CreateTaskRequest{}
+	mi := &file_exam_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateTaskRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateTaskRequest) ProtoMessage() {}
+
+func (x *CreateTaskRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateTaskRequest.ProtoReflect.Descriptor instead.
+func (*CreateTaskRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CreateTaskRequest) GetTask() *Task {
+	if x != nil {
+		return x.Task
+	}
+	return nil
+}
+
+type GetTaskByIDRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTaskByIDRequest) Reset() {
+	*x = GetTaskByIDRequest{}
+	mi := &file_exam_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTaskByIDRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTaskByIDRequest) ProtoMessage() {}
+
+func (x *GetTaskByIDRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTaskByIDRequest.ProtoReflect.Descriptor instead.
+func (*GetTaskByIDRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetTaskByIDRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type GetTasksByExamIDRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ExamId        string                 `protobuf:"bytes,1,opt,name=exam_id,json=examId,proto3" json:"exam_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTasksByExamIDRequest) Reset() {
+	*x = GetTasksByExamIDRequest{}
+	mi := &file_exam_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTasksByExamIDRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTasksByExamIDRequest) ProtoMessage() {}
+
+func (x *GetTasksByExamIDRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTasksByExamIDRequest.ProtoReflect.Descriptor instead.
+func (*GetTasksByExamIDRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GetTasksByExamIDRequest) GetExamId() string {
+	if x != nil {
+		return x.ExamId
+	}
+	return ""
+}
+
+type TasksResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Tasks         []*Task                `protobuf:"bytes,1,rep,name=tasks,proto3" json:"tasks,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TasksResponse) Reset() {
+	*x = TasksResponse{}
+	mi := &file_exam_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TasksResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TasksResponse) ProtoMessage() {}
+
+func (x *TasksResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TasksResponse.ProtoReflect.Descriptor instead.
+func (*TasksResponse) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *TasksResponse) GetTasks() []*Task {
+	if x != nil {
+		return x.Tasks
+	}
+	return nil
+}
+
+type UpdateTaskRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Task          *Task                  `protobuf:"bytes,1,opt,name=task,proto3" json:"task,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateTaskRequest) Reset() {
+	*x = UpdateTaskRequest{}
+	mi := &file_exam_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateTaskRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateTaskRequest) ProtoMessage() {}
+
+func (x *UpdateTaskRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateTaskRequest.ProtoReflect.Descriptor instead.
+func (*UpdateTaskRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *UpdateTaskRequest) GetTask() *Task {
+	if x != nil {
+		return x.Task
+	}
+	return nil
+}
+
+type DeleteTaskRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteTaskRequest) Reset() {
+	*x = DeleteTaskRequest{}
+	mi := &file_exam_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteTaskRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteTaskRequest) ProtoMessage() {}
+
+func (x *DeleteTaskRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteTaskRequest.ProtoReflect.Descriptor instead.
+func (*DeleteTaskRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *DeleteTaskRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type CreateQuestionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Question      *Question              `protobuf:"bytes,1,opt,name=question,proto3" json:"question,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateQuestionRequest) Reset() {
+	*x = CreateQuestionRequest{}
+	mi := &file_exam_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateQuestionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateQuestionRequest) ProtoMessage() {}
+
+func (x *CreateQuestionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateQuestionRequest.ProtoReflect.Descriptor instead.
+func (*CreateQuestionRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *CreateQuestionRequest) GetQuestion() *Question {
+	if x != nil {
+		return x.Question
+	}
+	return nil
+}
+
+type GetQuestionByIDRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetQuestionByIDRequest) Reset() {
+	*x = GetQuestionByIDRequest{}
+	mi := &file_exam_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetQuestionByIDRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetQuestionByIDRequest) ProtoMessage() {}
+
+func (x *GetQuestionByIDRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetQuestionByIDRequest.ProtoReflect.Descriptor instead.
+func (*GetQuestionByIDRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetQuestionByIDRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type GetQuestionsByExamIDRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ExamId        string                 `protobuf:"bytes,1,opt,name=exam_id,json=examId,proto3" json:"exam_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetQuestionsByExamIDRequest) Reset() {
+	*x = GetQuestionsByExamIDRequest{}
+	mi := &file_exam_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetQuestionsByExamIDRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetQuestionsByExamIDRequest) ProtoMessage() {}
+
+func (x *GetQuestionsByExamIDRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetQuestionsByExamIDRequest.ProtoReflect.Descriptor instead.
+func (*GetQuestionsByExamIDRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *GetQuestionsByExamIDRequest) GetExamId() string {
+	if x != nil {
+		return x.ExamId
+	}
+	return ""
+}
+
+type QuestionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Questions     []*Question            `protobuf:"bytes,1,rep,name=questions,proto3" json:"questions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *QuestionsResponse) Reset() {
+	*x = QuestionsResponse{}
+	mi := &file_exam_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *QuestionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QuestionsResponse) ProtoMessage() {}
+
+func (x *QuestionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QuestionsResponse.ProtoReflect.Descriptor instead.
+func (*QuestionsResponse) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *QuestionsResponse) GetQuestions() []*Question {
+	if x != nil {
+		return x.Questions
+	}
+	return nil
+}
+
+type UpdateQuestionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Question      *Question              `protobuf:"bytes,1,opt,name=question,proto3" json:"question,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateQuestionRequest) Reset() {
+	*x = UpdateQuestionRequest{}
+	mi := &file_exam_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateQuestionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateQuestionRequest) ProtoMessage() {}
+
+func (x *UpdateQuestionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateQuestionRequest.ProtoReflect.Descriptor instead.
+func (*UpdateQuestionRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *UpdateQuestionRequest) GetQuestion() *Question {
+	if x != nil {
+		return x.Question
+	}
+	return nil
+}
+
+type DeleteQuestionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteQuestionRequest) Reset() {
+	*x = DeleteQuestionRequest{}
+	mi := &file_exam_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteQuestionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteQuestionRequest) ProtoMessage() {}
+
+func (x *DeleteQuestionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteQuestionRequest.ProtoReflect.Descriptor instead.
+func (*DeleteQuestionRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *DeleteQuestionRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type CreateExamRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Exam          *Exam                  `protobuf:"bytes,1,opt,name=exam,proto3" json:"exam,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateExamRequest) Reset() {
+	*x = CreateExamRequest{}
+	mi := &file_exam_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateExamRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateExamRequest) ProtoMessage() {}
+
+func (x *CreateExamRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateExamRequest.ProtoReflect.Descriptor instead.
+func (*CreateExamRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *CreateExamRequest) GetExam() *Exam {
+	if x != nil {
+		return x.Exam
+	}
+	return nil
+}
+
+type GetExamByIDRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetExamByIDRequest) Reset() {
+	*x = GetExamByIDRequest{}
+	mi := &file_exam_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetExamByIDRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetExamByIDRequest) ProtoMessage() {}
+
+func (x *GetExamByIDRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetExamByIDRequest.ProtoReflect.Descriptor instead.
+func (*GetExamByIDRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetExamByIDRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type GetExamsByUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetExamsByUserRequest) Reset() {
+	*x = GetExamsByUserRequest{}
+	mi := &file_exam_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetExamsByUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetExamsByUserRequest) ProtoMessage() {}
+
+func (x *GetExamsByUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetExamsByUserRequest.ProtoReflect.Descriptor instead.
+func (*GetExamsByUserRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *GetExamsByUserRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type ExamsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Exams         []*Exam                `protobuf:"bytes,1,rep,name=exams,proto3" json:"exams,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExamsResponse) Reset() {
+	*x = ExamsResponse{}
+	mi := &file_exam_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExamsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExamsResponse) ProtoMessage() {}
+
+func (x *ExamsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExamsResponse.ProtoReflect.Descriptor instead.
+func (*ExamsResponse) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *ExamsResponse) GetExams() []*Exam {
+	if x != nil {
+		return x.Exams
+	}
+	return nil
+}
+
+type UpdateExamRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Exam          *Exam                  `protobuf:"bytes,1,opt,name=exam,proto3" json:"exam,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateExamRequest) Reset() {
+	*x = UpdateExamRequest{}
+	mi := &file_exam_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateExamRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateExamRequest) ProtoMessage() {}
+
+func (x *UpdateExamRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateExamRequest.ProtoReflect.Descriptor instead.
+func (*UpdateExamRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *UpdateExamRequest) GetExam() *Exam {
+	if x != nil {
+		return x.Exam
+	}
+	return nil
+}
+
+type UpdateExamStatusRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Status        string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateExamStatusRequest) Reset() {
+	*x = UpdateExamStatusRequest{}
+	mi := &file_exam_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateExamStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateExamStatusRequest) ProtoMessage() {}
+
+func (x *UpdateExamStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateExamStatusRequest.ProtoReflect.Descriptor instead.
+func (*UpdateExamStatusRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *UpdateExamStatusRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *UpdateExamStatusRequest) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+type DeleteExamRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteExamRequest) Reset() {
+	*x = DeleteExamRequest{}
+	mi := &file_exam_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteExamRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteExamRequest) ProtoMessage() {}
+
+func (x *DeleteExamRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteExamRequest.ProtoReflect.Descriptor instead.
+func (*DeleteExamRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *DeleteExamRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type GetExamWithDetailsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetExamWithDetailsRequest) Reset() {
+	*x = GetExamWithDetailsRequest{}
+	mi := &file_exam_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetExamWithDetailsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetExamWithDetailsRequest) ProtoMessage() {}
+
+func (x *GetExamWithDetailsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetExamWithDetailsRequest.ProtoReflect.Descriptor instead.
+func (*GetExamWithDetailsRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *GetExamWithDetailsRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type GenerateExamUsingAIRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	NumQuestions  int32                  `protobuf:"varint,2,opt,name=num_questions,json=numQuestions,proto3" json:"num_questions,omitempty"`
+	NumTasks      int32                  `protobuf:"varint,3,opt,name=num_tasks,json=numTasks,proto3" json:"num_tasks,omitempty"`
+	Topic         string                 `protobuf:"bytes,4,opt,name=topic,proto3" json:"topic,omitempty"`
+	Grade         string                 `protobuf:"bytes,5,opt,name=grade,proto3" json:"grade,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GenerateExamUsingAIRequest) Reset() {
+	*x = GenerateExamUsingAIRequest{}
+	mi := &file_exam_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GenerateExamUsingAIRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GenerateExamUsingAIRequest) ProtoMessage() {}
+
+func (x *GenerateExamUsingAIRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GenerateExamUsingAIRequest.ProtoReflect.Descriptor instead.
+func (*GenerateExamUsingAIRequest) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *GenerateExamUsingAIRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GenerateExamUsingAIRequest) GetNumQuestions() int32 {
+	if x != nil {
+		return x.NumQuestions
+	}
+	return 0
+}
+
+func (x *GenerateExamUsingAIRequest) GetNumTasks() int32 {
+	if x != nil {
+		return x.NumTasks
+	}
+	return 0
+}
+
+func (x *GenerateExamUsingAIRequest) GetTopic() string {
+	if x != nil {
+		return x.Topic
+	}
+	return ""
+}
+
+func (x *GenerateExamUsingAIRequest) GetGrade() string {
+	if x != nil {
+		return x.Grade
+	}
+	return ""
+}
+
+type TaskResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ExamId        string                 `protobuf:"bytes,2,opt,name=exam_id,json=examId,proto3" json:"exam_id,omitempty"`
+	TaskType      string                 `protobuf:"bytes,3,opt,name=task_type,json=taskType,proto3" json:"task_type,omitempty"`
+	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	Score         float32                `protobuf:"fixed32,5,opt,name=score,proto3" json:"score,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TaskResponse) Reset() {
+	*x = TaskResponse{}
+	mi := &file_exam_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TaskResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TaskResponse) ProtoMessage() {}
+
+func (x *TaskResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TaskResponse.ProtoReflect.Descriptor instead.
+func (*TaskResponse) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *TaskResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *TaskResponse) GetExamId() string {
+	if x != nil {
+		return x.ExamId
+	}
+	return ""
+}
+
+func (x *TaskResponse) GetTaskType() string {
+	if x != nil {
+		return x.TaskType
+	}
+	return ""
+}
+
+func (x *TaskResponse) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *TaskResponse) GetScore() float32 {
+	if x != nil {
+		return x.Score
+	}
+	return 0
+}
+
+func (x *TaskResponse) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type QuestionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ExamId        string                 `protobuf:"bytes,2,opt,name=exam_id,json=examId,proto3" json:"exam_id,omitempty"`
+	QuestionText  string                 `protobuf:"bytes,3,opt,name=question_text,json=questionText,proto3" json:"question_text,omitempty"`
+	Options       []string               `protobuf:"bytes,4,rep,name=options,proto3" json:"options,omitempty"`
+	CorrectAnswer string                 `protobuf:"bytes,5,opt,name=correct_answer,json=correctAnswer,proto3" json:"correct_answer,omitempty"`
+	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *QuestionResponse) Reset() {
+	*x = QuestionResponse{}
+	mi := &file_exam_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *QuestionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QuestionResponse) ProtoMessage() {}
+
+func (x *QuestionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QuestionResponse.ProtoReflect.Descriptor instead.
+func (*QuestionResponse) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *QuestionResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *QuestionResponse) GetExamId() string {
+	if x != nil {
+		return x.ExamId
+	}
+	return ""
+}
+
+func (x *QuestionResponse) GetQuestionText() string {
+	if x != nil {
+		return x.QuestionText
+	}
+	return ""
+}
+
+func (x *QuestionResponse) GetOptions() []string {
+	if x != nil {
+		return x.Options
+	}
+	return nil
+}
+
+func (x *QuestionResponse) GetCorrectAnswer() string {
+	if x != nil {
+		return x.CorrectAnswer
+	}
+	return ""
+}
+
+func (x *QuestionResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *QuestionResponse) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type ExamResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	CreatedBy     string                 `protobuf:"bytes,4,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	Status        string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExamResponse) Reset() {
+	*x = ExamResponse{}
+	mi := &file_exam_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExamResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExamResponse) ProtoMessage() {}
+
+func (x *ExamResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExamResponse.ProtoReflect.Descriptor instead.
+func (*ExamResponse) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *ExamResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ExamResponse) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *ExamResponse) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *ExamResponse) GetCreatedBy() string {
+	if x != nil {
+		return x.CreatedBy
+	}
+	return ""
+}
+
+func (x *ExamResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *ExamResponse) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *ExamResponse) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+type ExamDetailedResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	CreatedBy     string                 `protobuf:"bytes,4,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	Status        string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Tasks         []*Task                `protobuf:"bytes,8,rep,name=tasks,proto3" json:"tasks,omitempty"`
+	Questions     []*Question            `protobuf:"bytes,9,rep,name=questions,proto3" json:"questions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExamDetailedResponse) Reset() {
+	*x = ExamDetailedResponse{}
+	mi := &file_exam_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExamDetailedResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExamDetailedResponse) ProtoMessage() {}
+
+func (x *ExamDetailedResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_exam_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExamDetailedResponse.ProtoReflect.Descriptor instead.
+func (*ExamDetailedResponse) Descriptor() ([]byte, []int) {
+	return file_exam_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *ExamDetailedResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ExamDetailedResponse) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *ExamDetailedResponse) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *ExamDetailedResponse) GetCreatedBy() string {
+	if x != nil {
+		return x.CreatedBy
+	}
+	return ""
+}
+
+func (x *ExamDetailedResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *ExamDetailedResponse) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *ExamDetailedResponse) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *ExamDetailedResponse) GetTasks() []*Task {
+	if x != nil {
+		return x.Tasks
+	}
+	return nil
+}
+
+func (x *ExamDetailedResponse) GetQuestions() []*Question {
+	if x != nil {
+		return x.Questions
+	}
+	return nil
+}
+
 type ExamEvent struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -81,14 +1797,14 @@ type ExamEvent struct {
 	Status        string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	EventType     ExamEventType          `protobuf:"varint,8,opt,name=event_type,json=eventType,proto3,enum=exam.ExamEventType" json:"event_type,omitempty"`
+	EventType     ExamEventType          `protobuf:"varint,8,opt,name=event_type,json=eventType,proto3,enum=examservice.ExamEventType" json:"event_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ExamEvent) Reset() {
 	*x = ExamEvent{}
-	mi := &file_exam_proto_msgTypes[0]
+	mi := &file_exam_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -100,7 +1816,7 @@ func (x *ExamEvent) String() string {
 func (*ExamEvent) ProtoMessage() {}
 
 func (x *ExamEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[0]
+	mi := &file_exam_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -113,7 +1829,7 @@ func (x *ExamEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExamEvent.ProtoReflect.Descriptor instead.
 func (*ExamEvent) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{0}
+	return file_exam_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ExamEvent) GetId() string {
@@ -169,1307 +1885,7 @@ func (x *ExamEvent) GetEventType() ExamEventType {
 	if x != nil {
 		return x.EventType
 	}
-	return ExamEventType_CREATED
-}
-
-type ExamCreate struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
-	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	CreatedBy     string                 `protobuf:"bytes,3,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
-	Status        string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ExamCreate) Reset() {
-	*x = ExamCreate{}
-	mi := &file_exam_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ExamCreate) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ExamCreate) ProtoMessage() {}
-
-func (x *ExamCreate) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ExamCreate.ProtoReflect.Descriptor instead.
-func (*ExamCreate) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *ExamCreate) GetTitle() string {
-	if x != nil {
-		return x.Title
-	}
-	return ""
-}
-
-func (x *ExamCreate) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *ExamCreate) GetCreatedBy() string {
-	if x != nil {
-		return x.CreatedBy
-	}
-	return ""
-}
-
-func (x *ExamCreate) GetStatus() string {
-	if x != nil {
-		return x.Status
-	}
-	return ""
-}
-
-type ExamUpdate struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Title         *string                `protobuf:"bytes,2,opt,name=title,proto3,oneof" json:"title,omitempty"`
-	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	CreatedBy     *string                `protobuf:"bytes,4,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
-	Status        *string                `protobuf:"bytes,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ExamUpdate) Reset() {
-	*x = ExamUpdate{}
-	mi := &file_exam_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ExamUpdate) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ExamUpdate) ProtoMessage() {}
-
-func (x *ExamUpdate) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ExamUpdate.ProtoReflect.Descriptor instead.
-func (*ExamUpdate) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *ExamUpdate) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *ExamUpdate) GetTitle() string {
-	if x != nil && x.Title != nil {
-		return *x.Title
-	}
-	return ""
-}
-
-func (x *ExamUpdate) GetDescription() string {
-	if x != nil && x.Description != nil {
-		return *x.Description
-	}
-	return ""
-}
-
-func (x *ExamUpdate) GetCreatedBy() string {
-	if x != nil && x.CreatedBy != nil {
-		return *x.CreatedBy
-	}
-	return ""
-}
-
-func (x *ExamUpdate) GetStatus() string {
-	if x != nil && x.Status != nil {
-		return *x.Status
-	}
-	return ""
-}
-
-type ExamPatch struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Status        *string                `protobuf:"bytes,2,opt,name=status,proto3,oneof" json:"status,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ExamPatch) Reset() {
-	*x = ExamPatch{}
-	mi := &file_exam_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ExamPatch) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ExamPatch) ProtoMessage() {}
-
-func (x *ExamPatch) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ExamPatch.ProtoReflect.Descriptor instead.
-func (*ExamPatch) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *ExamPatch) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *ExamPatch) GetStatus() string {
-	if x != nil && x.Status != nil {
-		return *x.Status
-	}
-	return ""
-}
-
-type ExamCreateAI struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Grade         string                 `protobuf:"bytes,1,opt,name=grade,proto3" json:"grade,omitempty"`
-	Topic         string                 `protobuf:"bytes,2,opt,name=topic,proto3" json:"topic,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ExamCreateAI) Reset() {
-	*x = ExamCreateAI{}
-	mi := &file_exam_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ExamCreateAI) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ExamCreateAI) ProtoMessage() {}
-
-func (x *ExamCreateAI) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ExamCreateAI.ProtoReflect.Descriptor instead.
-func (*ExamCreateAI) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *ExamCreateAI) GetGrade() string {
-	if x != nil {
-		return x.Grade
-	}
-	return ""
-}
-
-func (x *ExamCreateAI) GetTopic() string {
-	if x != nil {
-		return x.Topic
-	}
-	return ""
-}
-
-type ExamResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	CreatedBy     string                 `protobuf:"bytes,4,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
-	Status        string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ExamResponse) Reset() {
-	*x = ExamResponse{}
-	mi := &file_exam_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ExamResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ExamResponse) ProtoMessage() {}
-
-func (x *ExamResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ExamResponse.ProtoReflect.Descriptor instead.
-func (*ExamResponse) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *ExamResponse) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *ExamResponse) GetTitle() string {
-	if x != nil {
-		return x.Title
-	}
-	return ""
-}
-
-func (x *ExamResponse) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *ExamResponse) GetCreatedBy() string {
-	if x != nil {
-		return x.CreatedBy
-	}
-	return ""
-}
-
-func (x *ExamResponse) GetStatus() string {
-	if x != nil {
-		return x.Status
-	}
-	return ""
-}
-
-func (x *ExamResponse) GetCreatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *ExamResponse) GetUpdatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
-}
-
-type ExamID struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ExamID) Reset() {
-	*x = ExamID{}
-	mi := &file_exam_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ExamID) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ExamID) ProtoMessage() {}
-
-func (x *ExamID) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ExamID.ProtoReflect.Descriptor instead.
-func (*ExamID) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *ExamID) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-type ExamList struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Exams         []*ExamResponse        `protobuf:"bytes,1,rep,name=exams,proto3" json:"exams,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ExamList) Reset() {
-	*x = ExamList{}
-	mi := &file_exam_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ExamList) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ExamList) ProtoMessage() {}
-
-func (x *ExamList) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ExamList.ProtoReflect.Descriptor instead.
-func (*ExamList) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *ExamList) GetExams() []*ExamResponse {
-	if x != nil {
-		return x.Exams
-	}
-	return nil
-}
-
-type QuestionCreate struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ExamId        string                 `protobuf:"bytes,1,opt,name=exam_id,json=examId,proto3" json:"exam_id,omitempty"`
-	QuestionText  string                 `protobuf:"bytes,2,opt,name=question_text,json=questionText,proto3" json:"question_text,omitempty"`
-	Options       []string               `protobuf:"bytes,3,rep,name=options,proto3" json:"options,omitempty"`
-	CorrectAnswer string                 `protobuf:"bytes,4,opt,name=correct_answer,json=correctAnswer,proto3" json:"correct_answer,omitempty"`
-	Status        string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *QuestionCreate) Reset() {
-	*x = QuestionCreate{}
-	mi := &file_exam_proto_msgTypes[8]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *QuestionCreate) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QuestionCreate) ProtoMessage() {}
-
-func (x *QuestionCreate) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[8]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QuestionCreate.ProtoReflect.Descriptor instead.
-func (*QuestionCreate) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *QuestionCreate) GetExamId() string {
-	if x != nil {
-		return x.ExamId
-	}
-	return ""
-}
-
-func (x *QuestionCreate) GetQuestionText() string {
-	if x != nil {
-		return x.QuestionText
-	}
-	return ""
-}
-
-func (x *QuestionCreate) GetOptions() []string {
-	if x != nil {
-		return x.Options
-	}
-	return nil
-}
-
-func (x *QuestionCreate) GetCorrectAnswer() string {
-	if x != nil {
-		return x.CorrectAnswer
-	}
-	return ""
-}
-
-func (x *QuestionCreate) GetStatus() string {
-	if x != nil {
-		return x.Status
-	}
-	return ""
-}
-
-type QuestionUpdate struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ExamId        *string                `protobuf:"bytes,2,opt,name=exam_id,json=examId,proto3,oneof" json:"exam_id,omitempty"`
-	QuestionText  *string                `protobuf:"bytes,3,opt,name=question_text,json=questionText,proto3,oneof" json:"question_text,omitempty"`
-	Options       []string               `protobuf:"bytes,4,rep,name=options,proto3" json:"options,omitempty"`
-	CorrectAnswer *string                `protobuf:"bytes,5,opt,name=correct_answer,json=correctAnswer,proto3,oneof" json:"correct_answer,omitempty"`
-	Status        *string                `protobuf:"bytes,6,opt,name=status,proto3,oneof" json:"status,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *QuestionUpdate) Reset() {
-	*x = QuestionUpdate{}
-	mi := &file_exam_proto_msgTypes[9]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *QuestionUpdate) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QuestionUpdate) ProtoMessage() {}
-
-func (x *QuestionUpdate) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[9]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QuestionUpdate.ProtoReflect.Descriptor instead.
-func (*QuestionUpdate) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *QuestionUpdate) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *QuestionUpdate) GetExamId() string {
-	if x != nil && x.ExamId != nil {
-		return *x.ExamId
-	}
-	return ""
-}
-
-func (x *QuestionUpdate) GetQuestionText() string {
-	if x != nil && x.QuestionText != nil {
-		return *x.QuestionText
-	}
-	return ""
-}
-
-func (x *QuestionUpdate) GetOptions() []string {
-	if x != nil {
-		return x.Options
-	}
-	return nil
-}
-
-func (x *QuestionUpdate) GetCorrectAnswer() string {
-	if x != nil && x.CorrectAnswer != nil {
-		return *x.CorrectAnswer
-	}
-	return ""
-}
-
-func (x *QuestionUpdate) GetStatus() string {
-	if x != nil && x.Status != nil {
-		return *x.Status
-	}
-	return ""
-}
-
-type QuestionPatch struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Status        *string                `protobuf:"bytes,2,opt,name=status,proto3,oneof" json:"status,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *QuestionPatch) Reset() {
-	*x = QuestionPatch{}
-	mi := &file_exam_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *QuestionPatch) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QuestionPatch) ProtoMessage() {}
-
-func (x *QuestionPatch) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QuestionPatch.ProtoReflect.Descriptor instead.
-func (*QuestionPatch) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *QuestionPatch) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *QuestionPatch) GetStatus() string {
-	if x != nil && x.Status != nil {
-		return *x.Status
-	}
-	return ""
-}
-
-type QuestionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ExamId        string                 `protobuf:"bytes,2,opt,name=exam_id,json=examId,proto3" json:"exam_id,omitempty"`
-	QuestionText  string                 `protobuf:"bytes,3,opt,name=question_text,json=questionText,proto3" json:"question_text,omitempty"`
-	Options       []string               `protobuf:"bytes,4,rep,name=options,proto3" json:"options,omitempty"`
-	CorrectAnswer string                 `protobuf:"bytes,5,opt,name=correct_answer,json=correctAnswer,proto3" json:"correct_answer,omitempty"`
-	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *QuestionResponse) Reset() {
-	*x = QuestionResponse{}
-	mi := &file_exam_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *QuestionResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QuestionResponse) ProtoMessage() {}
-
-func (x *QuestionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QuestionResponse.ProtoReflect.Descriptor instead.
-func (*QuestionResponse) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *QuestionResponse) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *QuestionResponse) GetExamId() string {
-	if x != nil {
-		return x.ExamId
-	}
-	return ""
-}
-
-func (x *QuestionResponse) GetQuestionText() string {
-	if x != nil {
-		return x.QuestionText
-	}
-	return ""
-}
-
-func (x *QuestionResponse) GetOptions() []string {
-	if x != nil {
-		return x.Options
-	}
-	return nil
-}
-
-func (x *QuestionResponse) GetCorrectAnswer() string {
-	if x != nil {
-		return x.CorrectAnswer
-	}
-	return ""
-}
-
-func (x *QuestionResponse) GetStatus() string {
-	if x != nil {
-		return x.Status
-	}
-	return ""
-}
-
-func (x *QuestionResponse) GetCreatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-type QuestionID struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *QuestionID) Reset() {
-	*x = QuestionID{}
-	mi := &file_exam_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *QuestionID) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QuestionID) ProtoMessage() {}
-
-func (x *QuestionID) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QuestionID.ProtoReflect.Descriptor instead.
-func (*QuestionID) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *QuestionID) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-type QuestionList struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Questions     []*QuestionResponse    `protobuf:"bytes,1,rep,name=questions,proto3" json:"questions,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *QuestionList) Reset() {
-	*x = QuestionList{}
-	mi := &file_exam_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *QuestionList) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QuestionList) ProtoMessage() {}
-
-func (x *QuestionList) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QuestionList.ProtoReflect.Descriptor instead.
-func (*QuestionList) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *QuestionList) GetQuestions() []*QuestionResponse {
-	if x != nil {
-		return x.Questions
-	}
-	return nil
-}
-
-type TaskCreate struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ExamId        string                 `protobuf:"bytes,1,opt,name=exam_id,json=examId,proto3" json:"exam_id,omitempty"`
-	TaskType      string                 `protobuf:"bytes,2,opt,name=task_type,json=taskType,proto3" json:"task_type,omitempty"`
-	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Score         float32                `protobuf:"fixed32,4,opt,name=score,proto3" json:"score,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TaskCreate) Reset() {
-	*x = TaskCreate{}
-	mi := &file_exam_proto_msgTypes[14]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TaskCreate) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TaskCreate) ProtoMessage() {}
-
-func (x *TaskCreate) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[14]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TaskCreate.ProtoReflect.Descriptor instead.
-func (*TaskCreate) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *TaskCreate) GetExamId() string {
-	if x != nil {
-		return x.ExamId
-	}
-	return ""
-}
-
-func (x *TaskCreate) GetTaskType() string {
-	if x != nil {
-		return x.TaskType
-	}
-	return ""
-}
-
-func (x *TaskCreate) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *TaskCreate) GetScore() float32 {
-	if x != nil {
-		return x.Score
-	}
-	return 0
-}
-
-type TaskUpdate struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ExamId        *string                `protobuf:"bytes,2,opt,name=exam_id,json=examId,proto3,oneof" json:"exam_id,omitempty"`
-	TaskType      *string                `protobuf:"bytes,3,opt,name=task_type,json=taskType,proto3,oneof" json:"task_type,omitempty"`
-	Description   *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Score         *float32               `protobuf:"fixed32,5,opt,name=score,proto3,oneof" json:"score,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TaskUpdate) Reset() {
-	*x = TaskUpdate{}
-	mi := &file_exam_proto_msgTypes[15]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TaskUpdate) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TaskUpdate) ProtoMessage() {}
-
-func (x *TaskUpdate) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[15]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TaskUpdate.ProtoReflect.Descriptor instead.
-func (*TaskUpdate) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{15}
-}
-
-func (x *TaskUpdate) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *TaskUpdate) GetExamId() string {
-	if x != nil && x.ExamId != nil {
-		return *x.ExamId
-	}
-	return ""
-}
-
-func (x *TaskUpdate) GetTaskType() string {
-	if x != nil && x.TaskType != nil {
-		return *x.TaskType
-	}
-	return ""
-}
-
-func (x *TaskUpdate) GetDescription() string {
-	if x != nil && x.Description != nil {
-		return *x.Description
-	}
-	return ""
-}
-
-func (x *TaskUpdate) GetScore() float32 {
-	if x != nil && x.Score != nil {
-		return *x.Score
-	}
-	return 0
-}
-
-type TaskPatch struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Score         *float32               `protobuf:"fixed32,2,opt,name=score,proto3,oneof" json:"score,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TaskPatch) Reset() {
-	*x = TaskPatch{}
-	mi := &file_exam_proto_msgTypes[16]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TaskPatch) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TaskPatch) ProtoMessage() {}
-
-func (x *TaskPatch) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[16]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TaskPatch.ProtoReflect.Descriptor instead.
-func (*TaskPatch) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{16}
-}
-
-func (x *TaskPatch) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *TaskPatch) GetScore() float32 {
-	if x != nil && x.Score != nil {
-		return *x.Score
-	}
-	return 0
-}
-
-type TaskResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ExamId        string                 `protobuf:"bytes,2,opt,name=exam_id,json=examId,proto3" json:"exam_id,omitempty"`
-	TaskType      string                 `protobuf:"bytes,3,opt,name=task_type,json=taskType,proto3" json:"task_type,omitempty"`
-	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
-	Score         float32                `protobuf:"fixed32,5,opt,name=score,proto3" json:"score,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TaskResponse) Reset() {
-	*x = TaskResponse{}
-	mi := &file_exam_proto_msgTypes[17]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TaskResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TaskResponse) ProtoMessage() {}
-
-func (x *TaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[17]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TaskResponse.ProtoReflect.Descriptor instead.
-func (*TaskResponse) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{17}
-}
-
-func (x *TaskResponse) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *TaskResponse) GetExamId() string {
-	if x != nil {
-		return x.ExamId
-	}
-	return ""
-}
-
-func (x *TaskResponse) GetTaskType() string {
-	if x != nil {
-		return x.TaskType
-	}
-	return ""
-}
-
-func (x *TaskResponse) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *TaskResponse) GetScore() float32 {
-	if x != nil {
-		return x.Score
-	}
-	return 0
-}
-
-func (x *TaskResponse) GetCreatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-type TaskID struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TaskID) Reset() {
-	*x = TaskID{}
-	mi := &file_exam_proto_msgTypes[18]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TaskID) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TaskID) ProtoMessage() {}
-
-func (x *TaskID) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[18]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TaskID.ProtoReflect.Descriptor instead.
-func (*TaskID) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{18}
-}
-
-func (x *TaskID) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-type TaskList struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tasks         []*TaskResponse        `protobuf:"bytes,1,rep,name=tasks,proto3" json:"tasks,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TaskList) Reset() {
-	*x = TaskList{}
-	mi := &file_exam_proto_msgTypes[19]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TaskList) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TaskList) ProtoMessage() {}
-
-func (x *TaskList) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[19]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TaskList.ProtoReflect.Descriptor instead.
-func (*TaskList) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{19}
-}
-
-func (x *TaskList) GetTasks() []*TaskResponse {
-	if x != nil {
-		return x.Tasks
-	}
-	return nil
-}
-
-type CacheTriggerRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	EntityId      string                 `protobuf:"bytes,1,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
-	EntityType    string                 `protobuf:"bytes,2,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"` // "exam", "question", "task"
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CacheTriggerRequest) Reset() {
-	*x = CacheTriggerRequest{}
-	mi := &file_exam_proto_msgTypes[20]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CacheTriggerRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CacheTriggerRequest) ProtoMessage() {}
-
-func (x *CacheTriggerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[20]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CacheTriggerRequest.ProtoReflect.Descriptor instead.
-func (*CacheTriggerRequest) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{20}
-}
-
-func (x *CacheTriggerRequest) GetEntityId() string {
-	if x != nil {
-		return x.EntityId
-	}
-	return ""
-}
-
-func (x *CacheTriggerRequest) GetEntityType() string {
-	if x != nil {
-		return x.EntityType
-	}
-	return ""
-}
-
-type MailRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	To            string                 `protobuf:"bytes,1,opt,name=to,proto3" json:"to,omitempty"`
-	Subject       string                 `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty"`
-	Body          string                 `protobuf:"bytes,3,opt,name=body,proto3" json:"body,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *MailRequest) Reset() {
-	*x = MailRequest{}
-	mi := &file_exam_proto_msgTypes[21]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *MailRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*MailRequest) ProtoMessage() {}
-
-func (x *MailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_exam_proto_msgTypes[21]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use MailRequest.ProtoReflect.Descriptor instead.
-func (*MailRequest) Descriptor() ([]byte, []int) {
-	return file_exam_proto_rawDescGZIP(), []int{21}
-}
-
-func (x *MailRequest) GetTo() string {
-	if x != nil {
-		return x.To
-	}
-	return ""
-}
-
-func (x *MailRequest) GetSubject() string {
-	if x != nil {
-		return x.Subject
-	}
-	return ""
-}
-
-func (x *MailRequest) GetBody() string {
-	if x != nil {
-		return x.Body
-	}
-	return ""
+	return ExamEventType_EXAM_CREATED
 }
 
 var File_exam_proto protoreflect.FileDescriptor
@@ -1477,8 +1893,25 @@ var File_exam_proto protoreflect.FileDescriptor
 const file_exam_proto_rawDesc = "" +
 	"\n" +
 	"\n" +
-	"exam.proto\x12\x04exam\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb4\x02\n" +
-	"\tExamEvent\x12\x0e\n" +
+	"exam.proto\x12\vexamservice\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xbf\x01\n" +
+	"\x04Task\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\aexam_id\x18\x02 \x01(\tR\x06examId\x12\x1b\n" +
+	"\ttask_type\x18\x03 \x01(\tR\btaskType\x12 \n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x14\n" +
+	"\x05score\x18\x05 \x01(\x02R\x05score\x129\n" +
+	"\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xec\x01\n" +
+	"\bQuestion\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\aexam_id\x18\x02 \x01(\tR\x06examId\x12#\n" +
+	"\rquestion_text\x18\x03 \x01(\tR\fquestionText\x12\x18\n" +
+	"\aoptions\x18\x04 \x03(\tR\aoptions\x12%\n" +
+	"\x0ecorrect_answer\x18\x05 \x01(\tR\rcorrectAnswer\x12\x16\n" +
+	"\x06status\x18\x06 \x01(\tR\x06status\x129\n" +
+	"\n" +
+	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xfb\x01\n" +
+	"\x04Exam\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1d\n" +
@@ -1488,35 +1921,84 @@ const file_exam_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x122\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xe1\x02\n" +
+	"\fExamDetailed\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1d\n" +
 	"\n" +
-	"event_type\x18\b \x01(\x0e2\x13.exam.ExamEventTypeR\teventType\"{\n" +
+	"created_by\x18\x04 \x01(\tR\tcreatedBy\x12\x16\n" +
+	"\x06status\x18\x05 \x01(\tR\x06status\x129\n" +
 	"\n" +
-	"ExamCreate\x12\x14\n" +
-	"\x05title\x18\x01 \x01(\tR\x05title\x12 \n" +
-	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x1d\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"created_by\x18\x03 \x01(\tR\tcreatedBy\x12\x16\n" +
-	"\x06status\x18\x04 \x01(\tR\x06status\"\xd3\x01\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12'\n" +
+	"\x05tasks\x18\b \x03(\v2\x11.examservice.TaskR\x05tasks\x123\n" +
+	"\tquestions\x18\t \x03(\v2\x15.examservice.QuestionR\tquestions\":\n" +
+	"\x11CreateTaskRequest\x12%\n" +
+	"\x04task\x18\x01 \x01(\v2\x11.examservice.TaskR\x04task\"$\n" +
+	"\x12GetTaskByIDRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"2\n" +
+	"\x17GetTasksByExamIDRequest\x12\x17\n" +
+	"\aexam_id\x18\x01 \x01(\tR\x06examId\"8\n" +
+	"\rTasksResponse\x12'\n" +
+	"\x05tasks\x18\x01 \x03(\v2\x11.examservice.TaskR\x05tasks\":\n" +
+	"\x11UpdateTaskRequest\x12%\n" +
+	"\x04task\x18\x01 \x01(\v2\x11.examservice.TaskR\x04task\"#\n" +
+	"\x11DeleteTaskRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"J\n" +
+	"\x15CreateQuestionRequest\x121\n" +
+	"\bquestion\x18\x01 \x01(\v2\x15.examservice.QuestionR\bquestion\"(\n" +
+	"\x16GetQuestionByIDRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"6\n" +
+	"\x1bGetQuestionsByExamIDRequest\x12\x17\n" +
+	"\aexam_id\x18\x01 \x01(\tR\x06examId\"H\n" +
+	"\x11QuestionsResponse\x123\n" +
+	"\tquestions\x18\x01 \x03(\v2\x15.examservice.QuestionR\tquestions\"J\n" +
+	"\x15UpdateQuestionRequest\x121\n" +
+	"\bquestion\x18\x01 \x01(\v2\x15.examservice.QuestionR\bquestion\"'\n" +
+	"\x15DeleteQuestionRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\":\n" +
+	"\x11CreateExamRequest\x12%\n" +
+	"\x04exam\x18\x01 \x01(\v2\x11.examservice.ExamR\x04exam\"$\n" +
+	"\x12GetExamByIDRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"0\n" +
+	"\x15GetExamsByUserRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"8\n" +
+	"\rExamsResponse\x12'\n" +
+	"\x05exams\x18\x01 \x03(\v2\x11.examservice.ExamR\x05exams\":\n" +
+	"\x11UpdateExamRequest\x12%\n" +
+	"\x04exam\x18\x01 \x01(\v2\x11.examservice.ExamR\x04exam\"A\n" +
+	"\x17UpdateExamStatusRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\"#\n" +
+	"\x11DeleteExamRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"+\n" +
+	"\x19GetExamWithDetailsRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xa3\x01\n" +
+	"\x1aGenerateExamUsingAIRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12#\n" +
+	"\rnum_questions\x18\x02 \x01(\x05R\fnumQuestions\x12\x1b\n" +
+	"\tnum_tasks\x18\x03 \x01(\x05R\bnumTasks\x12\x14\n" +
+	"\x05topic\x18\x04 \x01(\tR\x05topic\x12\x14\n" +
+	"\x05grade\x18\x05 \x01(\tR\x05grade\"\xc7\x01\n" +
+	"\fTaskResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\aexam_id\x18\x02 \x01(\tR\x06examId\x12\x1b\n" +
+	"\ttask_type\x18\x03 \x01(\tR\btaskType\x12 \n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x14\n" +
+	"\x05score\x18\x05 \x01(\x02R\x05score\x129\n" +
 	"\n" +
-	"ExamUpdate\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
-	"\x05title\x18\x02 \x01(\tH\x00R\x05title\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x12\"\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xf4\x01\n" +
+	"\x10QuestionResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\aexam_id\x18\x02 \x01(\tR\x06examId\x12#\n" +
+	"\rquestion_text\x18\x03 \x01(\tR\fquestionText\x12\x18\n" +
+	"\aoptions\x18\x04 \x03(\tR\aoptions\x12%\n" +
+	"\x0ecorrect_answer\x18\x05 \x01(\tR\rcorrectAnswer\x12\x16\n" +
+	"\x06status\x18\x06 \x01(\tR\x06status\x129\n" +
 	"\n" +
-	"created_by\x18\x04 \x01(\tH\x02R\tcreatedBy\x88\x01\x01\x12\x1b\n" +
-	"\x06status\x18\x05 \x01(\tH\x03R\x06status\x88\x01\x01B\b\n" +
-	"\x06_titleB\x0e\n" +
-	"\f_descriptionB\r\n" +
-	"\v_created_byB\t\n" +
-	"\a_status\"C\n" +
-	"\tExamPatch\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
-	"\x06status\x18\x02 \x01(\tH\x00R\x06status\x88\x01\x01B\t\n" +
-	"\a_status\":\n" +
-	"\fExamCreateAI\x12\x14\n" +
-	"\x05grade\x18\x01 \x01(\tR\x05grade\x12\x14\n" +
-	"\x05topic\x18\x02 \x01(\tR\x05topic\"\x83\x02\n" +
+	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x83\x02\n" +
 	"\fExamResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
@@ -1527,123 +2009,65 @@ const file_exam_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x18\n" +
-	"\x06ExamID\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"4\n" +
-	"\bExamList\x12(\n" +
-	"\x05exams\x18\x01 \x03(\v2\x12.exam.ExamResponseR\x05exams\"\xa7\x01\n" +
-	"\x0eQuestionCreate\x12\x17\n" +
-	"\aexam_id\x18\x01 \x01(\tR\x06examId\x12#\n" +
-	"\rquestion_text\x18\x02 \x01(\tR\fquestionText\x12\x18\n" +
-	"\aoptions\x18\x03 \x03(\tR\aoptions\x12%\n" +
-	"\x0ecorrect_answer\x18\x04 \x01(\tR\rcorrectAnswer\x12\x16\n" +
-	"\x06status\x18\x05 \x01(\tR\x06status\"\x87\x02\n" +
-	"\x0eQuestionUpdate\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1c\n" +
-	"\aexam_id\x18\x02 \x01(\tH\x00R\x06examId\x88\x01\x01\x12(\n" +
-	"\rquestion_text\x18\x03 \x01(\tH\x01R\fquestionText\x88\x01\x01\x12\x18\n" +
-	"\aoptions\x18\x04 \x03(\tR\aoptions\x12*\n" +
-	"\x0ecorrect_answer\x18\x05 \x01(\tH\x02R\rcorrectAnswer\x88\x01\x01\x12\x1b\n" +
-	"\x06status\x18\x06 \x01(\tH\x03R\x06status\x88\x01\x01B\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xe9\x02\n" +
+	"\x14ExamDetailedResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1d\n" +
 	"\n" +
-	"\b_exam_idB\x10\n" +
-	"\x0e_question_textB\x11\n" +
-	"\x0f_correct_answerB\t\n" +
-	"\a_status\"G\n" +
-	"\rQuestionPatch\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
-	"\x06status\x18\x02 \x01(\tH\x00R\x06status\x88\x01\x01B\t\n" +
-	"\a_status\"\xf4\x01\n" +
-	"\x10QuestionResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
-	"\aexam_id\x18\x02 \x01(\tR\x06examId\x12#\n" +
-	"\rquestion_text\x18\x03 \x01(\tR\fquestionText\x12\x18\n" +
-	"\aoptions\x18\x04 \x03(\tR\aoptions\x12%\n" +
-	"\x0ecorrect_answer\x18\x05 \x01(\tR\rcorrectAnswer\x12\x16\n" +
-	"\x06status\x18\x06 \x01(\tR\x06status\x129\n" +
+	"created_by\x18\x04 \x01(\tR\tcreatedBy\x12\x16\n" +
+	"\x06status\x18\x05 \x01(\tR\x06status\x129\n" +
 	"\n" +
-	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x1c\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"QuestionID\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"D\n" +
-	"\fQuestionList\x124\n" +
-	"\tquestions\x18\x01 \x03(\v2\x16.exam.QuestionResponseR\tquestions\"z\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12'\n" +
+	"\x05tasks\x18\b \x03(\v2\x11.examservice.TaskR\x05tasks\x123\n" +
+	"\tquestions\x18\t \x03(\v2\x15.examservice.QuestionR\tquestions\"\xbb\x02\n" +
+	"\tExamEvent\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1d\n" +
 	"\n" +
-	"TaskCreate\x12\x17\n" +
-	"\aexam_id\x18\x01 \x01(\tR\x06examId\x12\x1b\n" +
-	"\ttask_type\x18\x02 \x01(\tR\btaskType\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
-	"\x05score\x18\x04 \x01(\x02R\x05score\"\xd2\x01\n" +
+	"created_by\x18\x04 \x01(\tR\tcreatedBy\x12\x16\n" +
+	"\x06status\x18\x05 \x01(\tR\x06status\x129\n" +
 	"\n" +
-	"TaskUpdate\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1c\n" +
-	"\aexam_id\x18\x02 \x01(\tH\x00R\x06examId\x88\x01\x01\x12 \n" +
-	"\ttask_type\x18\x03 \x01(\tH\x01R\btaskType\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\x04 \x01(\tH\x02R\vdescription\x88\x01\x01\x12\x19\n" +
-	"\x05score\x18\x05 \x01(\x02H\x03R\x05score\x88\x01\x01B\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"\b_exam_idB\f\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x129\n" +
 	"\n" +
-	"_task_typeB\x0e\n" +
-	"\f_descriptionB\b\n" +
-	"\x06_score\"@\n" +
-	"\tTaskPatch\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
-	"\x05score\x18\x02 \x01(\x02H\x00R\x05score\x88\x01\x01B\b\n" +
-	"\x06_score\"\xc7\x01\n" +
-	"\fTaskResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
-	"\aexam_id\x18\x02 \x01(\tR\x06examId\x12\x1b\n" +
-	"\ttask_type\x18\x03 \x01(\tR\btaskType\x12 \n" +
-	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x14\n" +
-	"\x05score\x18\x05 \x01(\x02R\x05score\x129\n" +
+	"event_type\x18\b \x01(\x0e2\x1a.examservice.ExamEventTypeR\teventType*E\n" +
+	"\rExamEventType\x12\x10\n" +
+	"\fEXAM_CREATED\x10\x00\x12\x10\n" +
+	"\fEXAM_UPDATED\x10\x01\x12\x10\n" +
+	"\fEXAM_DELETED\x10\x022\xb0\r\n" +
+	"\vExamService\x12I\n" +
 	"\n" +
-	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x18\n" +
-	"\x06TaskID\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"4\n" +
-	"\bTaskList\x12(\n" +
-	"\x05tasks\x18\x01 \x03(\v2\x12.exam.TaskResponseR\x05tasks\"S\n" +
-	"\x13CacheTriggerRequest\x12\x1b\n" +
-	"\tentity_id\x18\x01 \x01(\tR\bentityId\x12\x1f\n" +
-	"\ventity_type\x18\x02 \x01(\tR\n" +
-	"entityType\"K\n" +
-	"\vMailRequest\x12\x0e\n" +
-	"\x02to\x18\x01 \x01(\tR\x02to\x12\x18\n" +
-	"\asubject\x18\x02 \x01(\tR\asubject\x12\x12\n" +
-	"\x04body\x18\x03 \x01(\tR\x04body*6\n" +
-	"\rExamEventType\x12\v\n" +
-	"\aCREATED\x10\x00\x12\v\n" +
-	"\aUPDATED\x10\x01\x12\v\n" +
-	"\aDELETED\x10\x022\xff\t\n" +
-	"\vExamService\x122\n" +
+	"CreateTask\x12\x1e.examservice.CreateTaskRequest\x1a\x19.examservice.TaskResponse\"\x00\x12K\n" +
+	"\vGetTaskByID\x12\x1f.examservice.GetTaskByIDRequest\x1a\x19.examservice.TaskResponse\"\x00\x12V\n" +
+	"\x10GetTasksByExamID\x12$.examservice.GetTasksByExamIDRequest\x1a\x1a.examservice.TasksResponse\"\x00\x12C\n" +
+	"\vGetAllTasks\x12\x16.google.protobuf.Empty\x1a\x1a.examservice.TasksResponse\"\x00\x12F\n" +
 	"\n" +
-	"CreateExam\x12\x10.exam.ExamCreate\x1a\x12.exam.ExamResponse\x12/\n" +
-	"\vGetExamByID\x12\f.exam.ExamID\x1a\x12.exam.ExamResponse\x125\n" +
-	"\vGetAllExams\x12\x16.google.protobuf.Empty\x1a\x0e.exam.ExamList\x122\n" +
+	"UpdateTask\x12\x1e.examservice.UpdateTaskRequest\x1a\x16.google.protobuf.Empty\"\x00\x12F\n" +
 	"\n" +
-	"UpdateExam\x12\x10.exam.ExamUpdate\x1a\x12.exam.ExamResponse\x120\n" +
-	"\tPatchExam\x12\x0f.exam.ExamPatch\x1a\x12.exam.ExamResponse\x122\n" +
+	"DeleteTask\x12\x1e.examservice.DeleteTaskRequest\x1a\x16.google.protobuf.Empty\"\x00\x12U\n" +
+	"\x0eCreateQuestion\x12\".examservice.CreateQuestionRequest\x1a\x1d.examservice.QuestionResponse\"\x00\x12W\n" +
+	"\x0fGetQuestionByID\x12#.examservice.GetQuestionByIDRequest\x1a\x1d.examservice.QuestionResponse\"\x00\x12b\n" +
+	"\x14GetQuestionsByExamID\x12(.examservice.GetQuestionsByExamIDRequest\x1a\x1e.examservice.QuestionsResponse\"\x00\x12K\n" +
+	"\x0fGetAllQuestions\x12\x16.google.protobuf.Empty\x1a\x1e.examservice.QuestionsResponse\"\x00\x12N\n" +
+	"\x0eUpdateQuestion\x12\".examservice.UpdateQuestionRequest\x1a\x16.google.protobuf.Empty\"\x00\x12N\n" +
+	"\x0eDeleteQuestion\x12\".examservice.DeleteQuestionRequest\x1a\x16.google.protobuf.Empty\"\x00\x12I\n" +
 	"\n" +
-	"DeleteExam\x12\f.exam.ExamID\x1a\x16.google.protobuf.Empty\x128\n" +
-	"\x0eGenerateExamAI\x12\x12.exam.ExamCreateAI\x1a\x12.exam.ExamResponse\x12>\n" +
-	"\x0eCreateQuestion\x12\x14.exam.QuestionCreate\x1a\x16.exam.QuestionResponse\x12;\n" +
-	"\x0fGetQuestionByID\x12\x10.exam.QuestionID\x1a\x16.exam.QuestionResponse\x12=\n" +
-	"\x0fGetAllQuestions\x12\x16.google.protobuf.Empty\x1a\x12.exam.QuestionList\x12>\n" +
-	"\x0eUpdateQuestion\x12\x14.exam.QuestionUpdate\x1a\x16.exam.QuestionResponse\x12<\n" +
-	"\rPatchQuestion\x12\x13.exam.QuestionPatch\x1a\x16.exam.QuestionResponse\x12:\n" +
-	"\x0eDeleteQuestion\x12\x10.exam.QuestionID\x1a\x16.google.protobuf.Empty\x122\n" +
+	"CreateExam\x12\x1e.examservice.CreateExamRequest\x1a\x19.examservice.ExamResponse\"\x00\x12K\n" +
+	"\vGetExamByID\x12\x1f.examservice.GetExamByIDRequest\x1a\x19.examservice.ExamResponse\"\x00\x12R\n" +
+	"\x0eGetExamsByUser\x12\".examservice.GetExamsByUserRequest\x1a\x1a.examservice.ExamsResponse\"\x00\x12F\n" +
 	"\n" +
-	"CreateTask\x12\x10.exam.TaskCreate\x1a\x12.exam.TaskResponse\x12/\n" +
-	"\vGetTaskByID\x12\f.exam.TaskID\x1a\x12.exam.TaskResponse\x125\n" +
-	"\vGetAllTasks\x12\x16.google.protobuf.Empty\x1a\x0e.exam.TaskList\x122\n" +
+	"UpdateExam\x12\x1e.examservice.UpdateExamRequest\x1a\x16.google.protobuf.Empty\"\x00\x12R\n" +
+	"\x10UpdateExamStatus\x12$.examservice.UpdateExamStatusRequest\x1a\x16.google.protobuf.Empty\"\x00\x12F\n" +
 	"\n" +
-	"UpdateTask\x12\x10.exam.TaskUpdate\x1a\x12.exam.TaskResponse\x120\n" +
-	"\tPatchTask\x12\x0f.exam.TaskPatch\x1a\x12.exam.TaskResponse\x122\n" +
-	"\n" +
-	"DeleteTask\x12\f.exam.TaskID\x1a\x16.google.protobuf.Empty\x12F\n" +
-	"\x11TriggerRedisCache\x12\x19.exam.CacheTriggerRequest\x1a\x16.google.protobuf.Empty\x12I\n" +
-	"\x14TriggerInMemoryCache\x12\x19.exam.CacheTriggerRequest\x1a\x16.google.protobuf.Empty\x12A\n" +
-	"\x14SendMailNotification\x12\x11.exam.MailRequest\x1a\x16.google.protobuf.EmptyBYZWgithub.com/mephirious/helper-for-teachers/services/exam-svc/internal/handler/grpc/pb;pbb\x06proto3"
+	"DeleteExam\x12\x1e.examservice.DeleteExamRequest\x1a\x16.google.protobuf.Empty\"\x00\x12C\n" +
+	"\vGetAllExams\x12\x16.google.protobuf.Empty\x1a\x1a.examservice.ExamsResponse\"\x00\x12a\n" +
+	"\x12GetExamWithDetails\x12&.examservice.GetExamWithDetailsRequest\x1a!.examservice.ExamDetailedResponse\"\x00\x12c\n" +
+	"\x13GenerateExamUsingAI\x12'.examservice.GenerateExamUsingAIRequest\x1a!.examservice.ExamDetailedResponse\"\x00B@Z>github.com/mephirious/helper-for-teachers/services/exam-svc/pbb\x06proto3"
 
 var (
 	file_exam_proto_rawDescOnce sync.Once
@@ -1658,94 +2082,118 @@ func file_exam_proto_rawDescGZIP() []byte {
 }
 
 var file_exam_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_exam_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
+var file_exam_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
 var file_exam_proto_goTypes = []any{
-	(ExamEventType)(0),            // 0: exam.ExamEventType
-	(*ExamEvent)(nil),             // 1: exam.ExamEvent
-	(*ExamCreate)(nil),            // 2: exam.ExamCreate
-	(*ExamUpdate)(nil),            // 3: exam.ExamUpdate
-	(*ExamPatch)(nil),             // 4: exam.ExamPatch
-	(*ExamCreateAI)(nil),          // 5: exam.ExamCreateAI
-	(*ExamResponse)(nil),          // 6: exam.ExamResponse
-	(*ExamID)(nil),                // 7: exam.ExamID
-	(*ExamList)(nil),              // 8: exam.ExamList
-	(*QuestionCreate)(nil),        // 9: exam.QuestionCreate
-	(*QuestionUpdate)(nil),        // 10: exam.QuestionUpdate
-	(*QuestionPatch)(nil),         // 11: exam.QuestionPatch
-	(*QuestionResponse)(nil),      // 12: exam.QuestionResponse
-	(*QuestionID)(nil),            // 13: exam.QuestionID
-	(*QuestionList)(nil),          // 14: exam.QuestionList
-	(*TaskCreate)(nil),            // 15: exam.TaskCreate
-	(*TaskUpdate)(nil),            // 16: exam.TaskUpdate
-	(*TaskPatch)(nil),             // 17: exam.TaskPatch
-	(*TaskResponse)(nil),          // 18: exam.TaskResponse
-	(*TaskID)(nil),                // 19: exam.TaskID
-	(*TaskList)(nil),              // 20: exam.TaskList
-	(*CacheTriggerRequest)(nil),   // 21: exam.CacheTriggerRequest
-	(*MailRequest)(nil),           // 22: exam.MailRequest
-	(*timestamppb.Timestamp)(nil), // 23: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),         // 24: google.protobuf.Empty
+	(ExamEventType)(0),                  // 0: examservice.ExamEventType
+	(*Task)(nil),                        // 1: examservice.Task
+	(*Question)(nil),                    // 2: examservice.Question
+	(*Exam)(nil),                        // 3: examservice.Exam
+	(*ExamDetailed)(nil),                // 4: examservice.ExamDetailed
+	(*CreateTaskRequest)(nil),           // 5: examservice.CreateTaskRequest
+	(*GetTaskByIDRequest)(nil),          // 6: examservice.GetTaskByIDRequest
+	(*GetTasksByExamIDRequest)(nil),     // 7: examservice.GetTasksByExamIDRequest
+	(*TasksResponse)(nil),               // 8: examservice.TasksResponse
+	(*UpdateTaskRequest)(nil),           // 9: examservice.UpdateTaskRequest
+	(*DeleteTaskRequest)(nil),           // 10: examservice.DeleteTaskRequest
+	(*CreateQuestionRequest)(nil),       // 11: examservice.CreateQuestionRequest
+	(*GetQuestionByIDRequest)(nil),      // 12: examservice.GetQuestionByIDRequest
+	(*GetQuestionsByExamIDRequest)(nil), // 13: examservice.GetQuestionsByExamIDRequest
+	(*QuestionsResponse)(nil),           // 14: examservice.QuestionsResponse
+	(*UpdateQuestionRequest)(nil),       // 15: examservice.UpdateQuestionRequest
+	(*DeleteQuestionRequest)(nil),       // 16: examservice.DeleteQuestionRequest
+	(*CreateExamRequest)(nil),           // 17: examservice.CreateExamRequest
+	(*GetExamByIDRequest)(nil),          // 18: examservice.GetExamByIDRequest
+	(*GetExamsByUserRequest)(nil),       // 19: examservice.GetExamsByUserRequest
+	(*ExamsResponse)(nil),               // 20: examservice.ExamsResponse
+	(*UpdateExamRequest)(nil),           // 21: examservice.UpdateExamRequest
+	(*UpdateExamStatusRequest)(nil),     // 22: examservice.UpdateExamStatusRequest
+	(*DeleteExamRequest)(nil),           // 23: examservice.DeleteExamRequest
+	(*GetExamWithDetailsRequest)(nil),   // 24: examservice.GetExamWithDetailsRequest
+	(*GenerateExamUsingAIRequest)(nil),  // 25: examservice.GenerateExamUsingAIRequest
+	(*TaskResponse)(nil),                // 26: examservice.TaskResponse
+	(*QuestionResponse)(nil),            // 27: examservice.QuestionResponse
+	(*ExamResponse)(nil),                // 28: examservice.ExamResponse
+	(*ExamDetailedResponse)(nil),        // 29: examservice.ExamDetailedResponse
+	(*ExamEvent)(nil),                   // 30: examservice.ExamEvent
+	(*timestamppb.Timestamp)(nil),       // 31: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),               // 32: google.protobuf.Empty
 }
 var file_exam_proto_depIdxs = []int32{
-	23, // 0: exam.ExamEvent.created_at:type_name -> google.protobuf.Timestamp
-	23, // 1: exam.ExamEvent.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 2: exam.ExamEvent.event_type:type_name -> exam.ExamEventType
-	23, // 3: exam.ExamResponse.created_at:type_name -> google.protobuf.Timestamp
-	23, // 4: exam.ExamResponse.updated_at:type_name -> google.protobuf.Timestamp
-	6,  // 5: exam.ExamList.exams:type_name -> exam.ExamResponse
-	23, // 6: exam.QuestionResponse.created_at:type_name -> google.protobuf.Timestamp
-	12, // 7: exam.QuestionList.questions:type_name -> exam.QuestionResponse
-	23, // 8: exam.TaskResponse.created_at:type_name -> google.protobuf.Timestamp
-	18, // 9: exam.TaskList.tasks:type_name -> exam.TaskResponse
-	2,  // 10: exam.ExamService.CreateExam:input_type -> exam.ExamCreate
-	7,  // 11: exam.ExamService.GetExamByID:input_type -> exam.ExamID
-	24, // 12: exam.ExamService.GetAllExams:input_type -> google.protobuf.Empty
-	3,  // 13: exam.ExamService.UpdateExam:input_type -> exam.ExamUpdate
-	4,  // 14: exam.ExamService.PatchExam:input_type -> exam.ExamPatch
-	7,  // 15: exam.ExamService.DeleteExam:input_type -> exam.ExamID
-	5,  // 16: exam.ExamService.GenerateExamAI:input_type -> exam.ExamCreateAI
-	9,  // 17: exam.ExamService.CreateQuestion:input_type -> exam.QuestionCreate
-	13, // 18: exam.ExamService.GetQuestionByID:input_type -> exam.QuestionID
-	24, // 19: exam.ExamService.GetAllQuestions:input_type -> google.protobuf.Empty
-	10, // 20: exam.ExamService.UpdateQuestion:input_type -> exam.QuestionUpdate
-	11, // 21: exam.ExamService.PatchQuestion:input_type -> exam.QuestionPatch
-	13, // 22: exam.ExamService.DeleteQuestion:input_type -> exam.QuestionID
-	15, // 23: exam.ExamService.CreateTask:input_type -> exam.TaskCreate
-	19, // 24: exam.ExamService.GetTaskByID:input_type -> exam.TaskID
-	24, // 25: exam.ExamService.GetAllTasks:input_type -> google.protobuf.Empty
-	16, // 26: exam.ExamService.UpdateTask:input_type -> exam.TaskUpdate
-	17, // 27: exam.ExamService.PatchTask:input_type -> exam.TaskPatch
-	19, // 28: exam.ExamService.DeleteTask:input_type -> exam.TaskID
-	21, // 29: exam.ExamService.TriggerRedisCache:input_type -> exam.CacheTriggerRequest
-	21, // 30: exam.ExamService.TriggerInMemoryCache:input_type -> exam.CacheTriggerRequest
-	22, // 31: exam.ExamService.SendMailNotification:input_type -> exam.MailRequest
-	6,  // 32: exam.ExamService.CreateExam:output_type -> exam.ExamResponse
-	6,  // 33: exam.ExamService.GetExamByID:output_type -> exam.ExamResponse
-	8,  // 34: exam.ExamService.GetAllExams:output_type -> exam.ExamList
-	6,  // 35: exam.ExamService.UpdateExam:output_type -> exam.ExamResponse
-	6,  // 36: exam.ExamService.PatchExam:output_type -> exam.ExamResponse
-	24, // 37: exam.ExamService.DeleteExam:output_type -> google.protobuf.Empty
-	6,  // 38: exam.ExamService.GenerateExamAI:output_type -> exam.ExamResponse
-	12, // 39: exam.ExamService.CreateQuestion:output_type -> exam.QuestionResponse
-	12, // 40: exam.ExamService.GetQuestionByID:output_type -> exam.QuestionResponse
-	14, // 41: exam.ExamService.GetAllQuestions:output_type -> exam.QuestionList
-	12, // 42: exam.ExamService.UpdateQuestion:output_type -> exam.QuestionResponse
-	12, // 43: exam.ExamService.PatchQuestion:output_type -> exam.QuestionResponse
-	24, // 44: exam.ExamService.DeleteQuestion:output_type -> google.protobuf.Empty
-	18, // 45: exam.ExamService.CreateTask:output_type -> exam.TaskResponse
-	18, // 46: exam.ExamService.GetTaskByID:output_type -> exam.TaskResponse
-	20, // 47: exam.ExamService.GetAllTasks:output_type -> exam.TaskList
-	18, // 48: exam.ExamService.UpdateTask:output_type -> exam.TaskResponse
-	18, // 49: exam.ExamService.PatchTask:output_type -> exam.TaskResponse
-	24, // 50: exam.ExamService.DeleteTask:output_type -> google.protobuf.Empty
-	24, // 51: exam.ExamService.TriggerRedisCache:output_type -> google.protobuf.Empty
-	24, // 52: exam.ExamService.TriggerInMemoryCache:output_type -> google.protobuf.Empty
-	24, // 53: exam.ExamService.SendMailNotification:output_type -> google.protobuf.Empty
-	32, // [32:54] is the sub-list for method output_type
-	10, // [10:32] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	31, // 0: examservice.Task.created_at:type_name -> google.protobuf.Timestamp
+	31, // 1: examservice.Question.created_at:type_name -> google.protobuf.Timestamp
+	31, // 2: examservice.Exam.created_at:type_name -> google.protobuf.Timestamp
+	31, // 3: examservice.Exam.updated_at:type_name -> google.protobuf.Timestamp
+	31, // 4: examservice.ExamDetailed.created_at:type_name -> google.protobuf.Timestamp
+	31, // 5: examservice.ExamDetailed.updated_at:type_name -> google.protobuf.Timestamp
+	1,  // 6: examservice.ExamDetailed.tasks:type_name -> examservice.Task
+	2,  // 7: examservice.ExamDetailed.questions:type_name -> examservice.Question
+	1,  // 8: examservice.CreateTaskRequest.task:type_name -> examservice.Task
+	1,  // 9: examservice.TasksResponse.tasks:type_name -> examservice.Task
+	1,  // 10: examservice.UpdateTaskRequest.task:type_name -> examservice.Task
+	2,  // 11: examservice.CreateQuestionRequest.question:type_name -> examservice.Question
+	2,  // 12: examservice.QuestionsResponse.questions:type_name -> examservice.Question
+	2,  // 13: examservice.UpdateQuestionRequest.question:type_name -> examservice.Question
+	3,  // 14: examservice.CreateExamRequest.exam:type_name -> examservice.Exam
+	3,  // 15: examservice.ExamsResponse.exams:type_name -> examservice.Exam
+	3,  // 16: examservice.UpdateExamRequest.exam:type_name -> examservice.Exam
+	31, // 17: examservice.TaskResponse.created_at:type_name -> google.protobuf.Timestamp
+	31, // 18: examservice.QuestionResponse.created_at:type_name -> google.protobuf.Timestamp
+	31, // 19: examservice.ExamResponse.created_at:type_name -> google.protobuf.Timestamp
+	31, // 20: examservice.ExamResponse.updated_at:type_name -> google.protobuf.Timestamp
+	31, // 21: examservice.ExamDetailedResponse.created_at:type_name -> google.protobuf.Timestamp
+	31, // 22: examservice.ExamDetailedResponse.updated_at:type_name -> google.protobuf.Timestamp
+	1,  // 23: examservice.ExamDetailedResponse.tasks:type_name -> examservice.Task
+	2,  // 24: examservice.ExamDetailedResponse.questions:type_name -> examservice.Question
+	31, // 25: examservice.ExamEvent.created_at:type_name -> google.protobuf.Timestamp
+	31, // 26: examservice.ExamEvent.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 27: examservice.ExamEvent.event_type:type_name -> examservice.ExamEventType
+	5,  // 28: examservice.ExamService.CreateTask:input_type -> examservice.CreateTaskRequest
+	6,  // 29: examservice.ExamService.GetTaskByID:input_type -> examservice.GetTaskByIDRequest
+	7,  // 30: examservice.ExamService.GetTasksByExamID:input_type -> examservice.GetTasksByExamIDRequest
+	32, // 31: examservice.ExamService.GetAllTasks:input_type -> google.protobuf.Empty
+	9,  // 32: examservice.ExamService.UpdateTask:input_type -> examservice.UpdateTaskRequest
+	10, // 33: examservice.ExamService.DeleteTask:input_type -> examservice.DeleteTaskRequest
+	11, // 34: examservice.ExamService.CreateQuestion:input_type -> examservice.CreateQuestionRequest
+	12, // 35: examservice.ExamService.GetQuestionByID:input_type -> examservice.GetQuestionByIDRequest
+	13, // 36: examservice.ExamService.GetQuestionsByExamID:input_type -> examservice.GetQuestionsByExamIDRequest
+	32, // 37: examservice.ExamService.GetAllQuestions:input_type -> google.protobuf.Empty
+	15, // 38: examservice.ExamService.UpdateQuestion:input_type -> examservice.UpdateQuestionRequest
+	16, // 39: examservice.ExamService.DeleteQuestion:input_type -> examservice.DeleteQuestionRequest
+	17, // 40: examservice.ExamService.CreateExam:input_type -> examservice.CreateExamRequest
+	18, // 41: examservice.ExamService.GetExamByID:input_type -> examservice.GetExamByIDRequest
+	19, // 42: examservice.ExamService.GetExamsByUser:input_type -> examservice.GetExamsByUserRequest
+	21, // 43: examservice.ExamService.UpdateExam:input_type -> examservice.UpdateExamRequest
+	22, // 44: examservice.ExamService.UpdateExamStatus:input_type -> examservice.UpdateExamStatusRequest
+	23, // 45: examservice.ExamService.DeleteExam:input_type -> examservice.DeleteExamRequest
+	32, // 46: examservice.ExamService.GetAllExams:input_type -> google.protobuf.Empty
+	24, // 47: examservice.ExamService.GetExamWithDetails:input_type -> examservice.GetExamWithDetailsRequest
+	25, // 48: examservice.ExamService.GenerateExamUsingAI:input_type -> examservice.GenerateExamUsingAIRequest
+	26, // 49: examservice.ExamService.CreateTask:output_type -> examservice.TaskResponse
+	26, // 50: examservice.ExamService.GetTaskByID:output_type -> examservice.TaskResponse
+	8,  // 51: examservice.ExamService.GetTasksByExamID:output_type -> examservice.TasksResponse
+	8,  // 52: examservice.ExamService.GetAllTasks:output_type -> examservice.TasksResponse
+	32, // 53: examservice.ExamService.UpdateTask:output_type -> google.protobuf.Empty
+	32, // 54: examservice.ExamService.DeleteTask:output_type -> google.protobuf.Empty
+	27, // 55: examservice.ExamService.CreateQuestion:output_type -> examservice.QuestionResponse
+	27, // 56: examservice.ExamService.GetQuestionByID:output_type -> examservice.QuestionResponse
+	14, // 57: examservice.ExamService.GetQuestionsByExamID:output_type -> examservice.QuestionsResponse
+	14, // 58: examservice.ExamService.GetAllQuestions:output_type -> examservice.QuestionsResponse
+	32, // 59: examservice.ExamService.UpdateQuestion:output_type -> google.protobuf.Empty
+	32, // 60: examservice.ExamService.DeleteQuestion:output_type -> google.protobuf.Empty
+	28, // 61: examservice.ExamService.CreateExam:output_type -> examservice.ExamResponse
+	28, // 62: examservice.ExamService.GetExamByID:output_type -> examservice.ExamResponse
+	20, // 63: examservice.ExamService.GetExamsByUser:output_type -> examservice.ExamsResponse
+	32, // 64: examservice.ExamService.UpdateExam:output_type -> google.protobuf.Empty
+	32, // 65: examservice.ExamService.UpdateExamStatus:output_type -> google.protobuf.Empty
+	32, // 66: examservice.ExamService.DeleteExam:output_type -> google.protobuf.Empty
+	20, // 67: examservice.ExamService.GetAllExams:output_type -> examservice.ExamsResponse
+	29, // 68: examservice.ExamService.GetExamWithDetails:output_type -> examservice.ExamDetailedResponse
+	29, // 69: examservice.ExamService.GenerateExamUsingAI:output_type -> examservice.ExamDetailedResponse
+	49, // [49:70] is the sub-list for method output_type
+	28, // [28:49] is the sub-list for method input_type
+	28, // [28:28] is the sub-list for extension type_name
+	28, // [28:28] is the sub-list for extension extendee
+	0,  // [0:28] is the sub-list for field type_name
 }
 
 func init() { file_exam_proto_init() }
@@ -1753,19 +2201,13 @@ func file_exam_proto_init() {
 	if File_exam_proto != nil {
 		return
 	}
-	file_exam_proto_msgTypes[2].OneofWrappers = []any{}
-	file_exam_proto_msgTypes[3].OneofWrappers = []any{}
-	file_exam_proto_msgTypes[9].OneofWrappers = []any{}
-	file_exam_proto_msgTypes[10].OneofWrappers = []any{}
-	file_exam_proto_msgTypes[15].OneofWrappers = []any{}
-	file_exam_proto_msgTypes[16].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_exam_proto_rawDesc), len(file_exam_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   22,
+			NumMessages:   30,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -1,98 +1,181 @@
 syntax = "proto3";
 
-package exam;
+package examservice;
 
-option go_package = "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/handler/grpc/pb;pb";
+option go_package = "github.com/mephirious/helper-for-teachers/services/exam-svc/pb";
 
-import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
-// ========================= ENUM & EVENT =========================
+service ExamService {
+  rpc CreateTask(CreateTaskRequest) returns (TaskResponse) {}
+  rpc GetTaskByID(GetTaskByIDRequest) returns (TaskResponse) {}
+  rpc GetTasksByExamID(GetTasksByExamIDRequest) returns (TasksResponse) {}
+  rpc GetAllTasks(google.protobuf.Empty) returns (TasksResponse) {}
+  rpc UpdateTask(UpdateTaskRequest) returns (google.protobuf.Empty) {}
+  rpc DeleteTask(DeleteTaskRequest) returns (google.protobuf.Empty) {}
+
+  rpc CreateQuestion(CreateQuestionRequest) returns (QuestionResponse) {}
+  rpc GetQuestionByID(GetQuestionByIDRequest) returns (QuestionResponse) {}
+  rpc GetQuestionsByExamID(GetQuestionsByExamIDRequest) returns (QuestionsResponse) {}
+  rpc GetAllQuestions(google.protobuf.Empty) returns (QuestionsResponse) {}
+  rpc UpdateQuestion(UpdateQuestionRequest) returns (google.protobuf.Empty) {}
+  rpc DeleteQuestion(DeleteQuestionRequest) returns (google.protobuf.Empty) {}
+
+  rpc CreateExam(CreateExamRequest) returns (ExamResponse) {}
+  rpc GetExamByID(GetExamByIDRequest) returns (ExamResponse) {}
+  rpc GetExamsByUser(GetExamsByUserRequest) returns (ExamsResponse) {}
+  rpc UpdateExam(UpdateExamRequest) returns (google.protobuf.Empty) {}
+  rpc UpdateExamStatus(UpdateExamStatusRequest) returns (google.protobuf.Empty) {}
+  rpc DeleteExam(DeleteExamRequest) returns (google.protobuf.Empty) {}
+  rpc GetAllExams(google.protobuf.Empty) returns (ExamsResponse) {}
+  rpc GetExamWithDetails(GetExamWithDetailsRequest) returns (ExamDetailedResponse) {}
+  rpc GenerateExamUsingAI(GenerateExamUsingAIRequest) returns (ExamDetailedResponse) {}
+}
 
 enum ExamEventType {
-  CREATED = 0;
-  UPDATED = 1;
-  DELETED = 2;
+  EXAM_CREATED = 0;
+  EXAM_UPDATED = 1;
+  EXAM_DELETED = 2;
 }
 
-message ExamEvent {
+message Task {
   string id = 1;
-  string title = 2;
-  string description = 3;
-  string created_by = 4;
-  string status = 5;
+  string exam_id = 2;
+  string task_type = 3;
+  string description = 4;
+  float score = 5;
   google.protobuf.Timestamp created_at = 6;
-  google.protobuf.Timestamp updated_at = 7;
-  ExamEventType event_type = 8;
 }
 
-// ========================= EXAM =========================
-
-message ExamCreate {
-  string title = 1;
-  string description = 2;
-  string created_by = 3;
-  string status = 4;
-}
-
-message ExamUpdate {
+message Question {
   string id = 1;
-  optional string title = 2;
-  optional string description = 3;
-  optional string created_by = 4;
-  optional string status = 5;
-}
-
-message ExamPatch {
-  string id = 1;
-  optional string status = 2;
-}
-
-message ExamCreateAI {
-  string grade = 1;
-  string topic = 2;
-}
-
-message ExamResponse {
-  string id = 1;
-  string title = 2;
-  string description = 3;
-  string created_by = 4;
-  string status = 5;
-  google.protobuf.Timestamp created_at = 6;
-  google.protobuf.Timestamp updated_at = 7;
-}
-
-message ExamID {
-  string id = 1;
-}
-
-message ExamList {
-  repeated ExamResponse exams = 1;
-}
-
-// ========================= QUESTION =========================
-
-message QuestionCreate {
-  string exam_id = 1;
-  string question_text = 2;
-  repeated string options = 3;
-  string correct_answer = 4;
-  string status = 5;
-}
-
-message QuestionUpdate {
-  string id = 1;
-  optional string exam_id = 2;
-  optional string question_text = 3;
+  string exam_id = 2;
+  string question_text = 3;
   repeated string options = 4;
-  optional string correct_answer = 5;
-  optional string status = 6;
+  string correct_answer = 5;
+  string status = 6;
+  google.protobuf.Timestamp created_at = 7;
 }
 
-message QuestionPatch {
+message Exam {
   string id = 1;
-  optional string status = 2;
+  string title = 2;
+  string description = 3;
+  string created_by = 4;
+  string status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message ExamDetailed {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string created_by = 4;
+  string status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  repeated Task tasks = 8;
+  repeated Question questions = 9;
+}
+
+message CreateTaskRequest {
+  Task task = 1;
+}
+
+message GetTaskByIDRequest {
+  string id = 1;
+}
+
+message GetTasksByExamIDRequest {
+  string exam_id = 1;
+}
+
+message TasksResponse {
+  repeated Task tasks = 1;
+}
+
+message UpdateTaskRequest {
+  Task task = 1;
+}
+
+message DeleteTaskRequest {
+  string id = 1;
+}
+
+message CreateQuestionRequest {
+  Question question = 1;
+}
+
+message GetQuestionByIDRequest {
+  string id = 1;
+}
+
+message GetQuestionsByExamIDRequest {
+  string exam_id = 1;
+}
+
+message QuestionsResponse {
+  repeated Question questions = 1;
+}
+
+message UpdateQuestionRequest {
+  Question question = 1;
+}
+
+message DeleteQuestionRequest {
+  string id = 1;
+}
+
+message CreateExamRequest {
+  Exam exam = 1;
+}
+
+message GetExamByIDRequest {
+  string id = 1;
+}
+
+message GetExamsByUserRequest {
+  string user_id = 1;
+}
+
+message ExamsResponse {
+  repeated Exam exams = 1;
+}
+
+message UpdateExamRequest {
+  Exam exam = 1;
+}
+
+message UpdateExamStatusRequest {
+  string id = 1;
+  string status = 2;
+}
+
+message DeleteExamRequest {
+  string id = 1;
+}
+
+message GetExamWithDetailsRequest {
+  string id = 1;
+}
+
+message GenerateExamUsingAIRequest {
+  string user_id = 1;
+  int32 num_questions = 2;
+  int32 num_tasks = 3;
+  string topic = 4;
+  string grade = 5;
+}
+
+message TaskResponse {
+  string id = 1;
+  string exam_id = 2;
+  string task_type = 3;
+  string description = 4;
+  float score = 5;
+  google.protobuf.Timestamp created_at = 6;
 }
 
 message QuestionResponse {
@@ -105,98 +188,35 @@ message QuestionResponse {
   google.protobuf.Timestamp created_at = 7;
 }
 
-message QuestionID {
+message ExamResponse {
   string id = 1;
-}
-
-message QuestionList {
-  repeated QuestionResponse questions = 1;
-}
-
-// ========================= TASK =========================
-
-message TaskCreate {
-  string exam_id = 1;
-  string task_type = 2;
+  string title = 2;
   string description = 3;
-  float score = 4;
-}
-
-message TaskUpdate {
-  string id = 1;
-  optional string exam_id = 2;
-  optional string task_type = 3;
-  optional string description = 4;
-  optional float score = 5;
-}
-
-message TaskPatch {
-  string id = 1;
-  optional float score = 2;
-}
-
-message TaskResponse {
-  string id = 1;
-  string exam_id = 2;
-  string task_type = 3;
-  string description = 4;
-  float score = 5;
+  string created_by = 4;
+  string status = 5;
   google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
 }
 
-message TaskID {
+message ExamDetailedResponse {
   string id = 1;
+  string title = 2;
+  string description = 3;
+  string created_by = 4;
+  string status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  repeated Task tasks = 8;
+  repeated Question questions = 9;
 }
 
-message TaskList {
-  repeated TaskResponse tasks = 1;
-}
-
-// ========================= Utility Requests =========================
-
-message CacheTriggerRequest {
-  string entity_id = 1;
-  string entity_type = 2; // "exam", "question", "task"
-}
-
-message MailRequest {
-  string to = 1;
-  string subject = 2;
-  string body = 3;
-}
-
-// ========================= SERVICE =========================
-
-service ExamService {
-  // Exam
-  rpc CreateExam(ExamCreate) returns (ExamResponse);
-  rpc GetExamByID(ExamID) returns (ExamResponse);
-  rpc GetAllExams(google.protobuf.Empty) returns (ExamList);
-  rpc UpdateExam(ExamUpdate) returns (ExamResponse);
-  rpc PatchExam(ExamPatch) returns (ExamResponse);
-  rpc DeleteExam(ExamID) returns (google.protobuf.Empty);
-
-  // AI Generation
-  rpc GenerateExamAI(ExamCreateAI) returns (ExamResponse);
-
-  // Question
-  rpc CreateQuestion(QuestionCreate) returns (QuestionResponse);
-  rpc GetQuestionByID(QuestionID) returns (QuestionResponse);
-  rpc GetAllQuestions(google.protobuf.Empty) returns (QuestionList);
-  rpc UpdateQuestion(QuestionUpdate) returns (QuestionResponse);
-  rpc PatchQuestion(QuestionPatch) returns (QuestionResponse);
-  rpc DeleteQuestion(QuestionID) returns (google.protobuf.Empty);
-
-  // Task
-  rpc CreateTask(TaskCreate) returns (TaskResponse);
-  rpc GetTaskByID(TaskID) returns (TaskResponse);
-  rpc GetAllTasks(google.protobuf.Empty) returns (TaskList);
-  rpc UpdateTask(TaskUpdate) returns (TaskResponse);
-  rpc PatchTask(TaskPatch) returns (TaskResponse);
-  rpc DeleteTask(TaskID) returns (google.protobuf.Empty);
-
-  // Cache and Mail
-  rpc TriggerRedisCache(CacheTriggerRequest) returns (google.protobuf.Empty);
-  rpc TriggerInMemoryCache(CacheTriggerRequest) returns (google.protobuf.Empty);
-  rpc SendMailNotification(MailRequest) returns (google.protobuf.Empty);
+message ExamEvent {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string created_by = 4;
+  string status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  ExamEventType event_type = 8;
 }
