@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
-	"github.com/mephirious/helper-for-teachers/services/exam-svc/app"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/config"
+	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/app"
 )
 
 func main() {

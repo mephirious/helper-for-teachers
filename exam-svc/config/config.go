@@ -31,7 +31,8 @@ type (
 	}
 
 	GeminiConfig struct {
-		APIKey string `env:"API_KEY"`
+		APIKey    string `env:"API_KEY"`
+		ModelName string `env:"MODEL_NAME"`
 	}
 
 	NATSConfig struct {

@@ -3,8 +3,10 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
+	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/mailjet"
 	redis "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/redis/cache"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/domain"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/repository"
@@ -13,13 +15,15 @@ import (
 
 type questionUseCase struct {
 	questionRepo  repository.QuestionRepository
-	questionCache redis.QuestionCache
+	questionCache *redis.QuestionCache
+	mailjet       *mailjet.MailjetClient
 }
 
-func NewQuestionUseCase(repo repository.QuestionRepository, cache redis.QuestionCache) QuestionUseCase {
+func NewQuestionUseCase(repo repository.QuestionRepository, cache *redis.QuestionCache, mailjetClient *mailjet.MailjetClient) QuestionUseCase {
 	return &questionUseCase{
 		questionRepo:  repo,
 		questionCache: cache,
+		mailjet:       mailjetClient,
 	}
 }
 
@@ -85,5 +89,14 @@ func (uc *questionUseCase) UpdateQuestion(ctx context.Context, question *domain.
 		return err
 	}
 	_ = uc.questionCache.Set(ctx, *question)
+
+	if question.Status == "verified" && uc.mailjet != nil {
+		if err := uc.mailjet.SendTemplateEmail("admin@example.com", "Admin", mailjet.QuestionVerifiedTemplate); err != nil {
+			log.Printf("Failed to send question verified email: %v", err)
+		} else {
+			log.Printf("Sent question verified email for question ID: %s", question.ID.Hex())
+		}
+	}
+
 	return nil
 }

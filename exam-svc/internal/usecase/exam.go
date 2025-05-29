@@ -8,6 +8,7 @@ import (
 
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/gemini"
 	inmemory "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/in-memory"
+	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/mailjet"
 	nats "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/nats"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/domain"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/repository"
@@ -20,18 +21,12 @@ type examUseCase struct {
 	questionRepo repository.QuestionRepository
 	taskRepo     repository.TaskRepository
 	geminiClient *gemini.Client
-	publisher    nats.ExamEventProducer
+	publisher    *nats.ExamEventProducer
 	cache        *inmemory.CacheManager
+	mailjet      *mailjet.MailjetClient
 }
 
-func NewExamUseCase(
-	examRepo repository.ExamRepository,
-	questionRepo repository.QuestionRepository,
-	taskRepo repository.TaskRepository,
-	geminiClient *gemini.Client,
-	publisher nats.ExamEventProducer,
-	cache *inmemory.CacheManager,
-) ExamUseCase {
+func NewExamUseCase(examRepo repository.ExamRepository, questionRepo repository.QuestionRepository, taskRepo repository.TaskRepository, geminiClient *gemini.Client, publisher *nats.ExamEventProducer, cache *inmemory.CacheManager, mailjetClient *mailjet.MailjetClient) ExamUseCase {
 	return &examUseCase{
 		examRepo:     examRepo,
 		questionRepo: questionRepo,
@@ -39,6 +34,7 @@ func NewExamUseCase(
 		geminiClient: geminiClient,
 		publisher:    publisher,
 		cache:        cache,
+		mailjet:      mailjetClient,
 	}
 }
 
@@ -104,6 +100,14 @@ func (uc *examUseCase) UpdateExamStatus(ctx context.Context, id primitive.Object
 		log.Printf("Failed to push update event to NATS: %v", err)
 	}
 
+	if status == "verified" && uc.mailjet != nil {
+		if err := uc.mailjet.SendTemplateEmail("admin@example.com", "Admin", mailjet.ExamVerifiedTemplate); err != nil {
+			log.Printf("Failed to send exam verified email: %v", err)
+		} else {
+			log.Printf("Sent exam verified email for exam ID: %s", id.Hex())
+		}
+	}
+
 	return nil
 }
 
@@ -124,6 +128,14 @@ func (uc *examUseCase) UpdateExam(ctx context.Context, exam *domain.Exam) error 
 
 	if err := uc.publisher.Push(ctx, updated, pb.ExamEventType_EXAM_UPDATED); err != nil {
 		log.Printf("Failed to push update event to NATS: %v", err)
+	}
+
+	if exam.Status == "verified" && uc.mailjet != nil {
+		if err := uc.mailjet.SendTemplateEmail("admin@example.com", "Admin", mailjet.ExamVerifiedTemplate); err != nil {
+			log.Printf("Failed to send exam verified email: %v", err)
+		} else {
+			log.Printf("Sent exam verified email for exam ID: %s", exam.ID.Hex())
+		}
 	}
 
 	return nil

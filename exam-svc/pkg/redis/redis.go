@@ -9,9 +9,10 @@ import (
 )
 
 type Config struct {
-	Host     string        `env:"HOST"`
+	Addr     string        `env:"HOST" envDefault:"localhost:6379"`
 	Password string        `env:"PASSWORD"`
-	TTL      time.Duration `env:"TTL" envDefault:"0"`
+	DB       int           `env:"DB" envDefault:"0"`
+	TTL      time.Duration `env:"TTL" envDefault:"86400s"`
 }
 
 type Client struct {
@@ -21,18 +22,19 @@ type Client struct {
 
 func NewClient(ctx context.Context, cfg Config) (*Client, error) {
 	opts := &redis.Options{
-		Addr:     cfg.Host,
+		Addr:     cfg.Addr,
 		Password: cfg.Password,
+		DB:       cfg.DB,
 	}
 
-	client := redis.NewClient(opts)
+	rdb := redis.NewClient(opts)
 
-	if err := client.Ping(ctx).Err(); err != nil {
-		return nil, fmt.Errorf("redis ping failed: %w", err)
+	if err := rdb.Ping(ctx).Err(); err != nil {
+		return nil, fmt.Errorf("failed to ping Redis: %w", err)
 	}
 
 	return &Client{
-		client: client,
+		client: rdb,
 		ttl:    cfg.TTL,
 	}, nil
 }

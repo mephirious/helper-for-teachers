@@ -13,10 +13,10 @@ import (
 
 type taskUseCase struct {
 	taskRepo  repository.TaskRepository
-	taskCache redis.TaskCache
+	taskCache *redis.TaskCache
 }
 
-func NewTaskUseCase(repo repository.TaskRepository, cache redis.TaskCache) TaskUseCase {
+func NewTaskUseCase(repo repository.TaskRepository, cache *redis.TaskCache) TaskUseCase {
 	return &taskUseCase{
 		taskRepo:  repo,
 		taskCache: cache,

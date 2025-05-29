@@ -1,88 +1,52 @@
-package server
+package service
 
 import (
-	"context"
+	"fmt"
 	"net"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 
+	"github.com/mephirious/helper-for-teachers/services/exam-svc/config"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/grpc/handler"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/usecase"
 	pb "github.com/mephirious/helper-for-teachers/services/exam-svc/proto"
-	"github.com/sirupsen/logrus"
+
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
-type Server struct {
-	grpcServer *grpc.Server
-	logger     *logrus.Logger
+type GRPCServer struct {
+	Cfg      config.GRPCServer
+	server   *grpc.Server
+	addr     string
+	listener net.Listener
 }
 
-func NewServer(taskUseCase usecase.TaskUseCase, questionUseCase usecase.QuestionUseCase, examUseCase usecase.ExamUseCase) *Server {
-	logger := logrus.New()
-	logger.SetFormatter(&logrus.JSONFormatter{})
-	logger.SetOutput(os.Stdout)
-
-	examHandler := handler.NewExamHandler(taskUseCase, questionUseCase, examUseCase)
-	grpcServer := grpc.NewServer()
-	pb.RegisterExamServiceServer(grpcServer, examHandler)
-
-	return &Server{
-		grpcServer: grpcServer,
-		logger:     logger,
-	}
-}
-
-func (s *Server) Start(port string) error {
-	listener, err := net.Listen("tcp", ":"+port)
+func NewGRPCServer(cfg config.Config, taskUC usecase.TaskUseCase, questionUC usecase.QuestionUseCase, examUC usecase.ExamUseCase) (*GRPCServer, error) {
+	addr := fmt.Sprintf("0.0.0.0:%d", cfg.Server.GRPCServer.Port)
+	lis, err := net.Listen("tcp", addr)
 	if err != nil {
-		s.logger.Errorf("failed to listen on port %s: %v", port, err)
-		return err
+		return nil, fmt.Errorf("failed to listen on %s: %w", addr, err)
 	}
 
-	s.logger.Infof("Starting gRPC server on port %s", port)
-	go func() {
-		if err := s.grpcServer.Serve(listener); err != nil {
-			s.logger.Errorf("failed to serve gRPC server: %v", err)
-		}
-	}()
+	s := grpc.NewServer()
+	examHandler := handler.NewExamHandler(taskUC, questionUC, examUC)
 
-	return nil
+	pb.RegisterExamServiceServer(s, examHandler)
+	reflection.Register(s)
+
+	return &GRPCServer{
+		Cfg:      cfg.Server.GRPCServer,
+		server:   s,
+		addr:     addr,
+		listener: lis,
+	}, nil
 }
 
-func (s *Server) Shutdown(ctx context.Context) error {
-	stopped := make(chan struct{})
-	go func() {
-		s.grpcServer.GracefulStop()
-		close(stopped)
-	}()
-
-	select {
-	case <-ctx.Done():
-		s.logger.Warn("Shutdown timeout, forcing stop")
-		s.grpcServer.Stop()
-		return ctx.Err()
-	case <-stopped:
-		s.logger.Info("gRPC server stopped gracefully")
-		return nil
-	}
+func (s *GRPCServer) Run() error {
+	fmt.Printf("gRPC server running on %s\n", s.addr)
+	return s.server.Serve(s.listener)
 }
 
-func (s *Server) Run(port string) error {
-	if err := s.Start(port); err != nil {
-		return err
-	}
-
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
-
-	<-stop
-	s.logger.Info("Received shutdown signal")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	return s.Shutdown(ctx)
+func (s *GRPCServer) Stop() {
+	s.server.GracefulStop()
+	fmt.Println("gRPC server stopped gracefully")
 }
