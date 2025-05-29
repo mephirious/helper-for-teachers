@@ -81,9 +81,14 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	taskRepo := repository.NewTaskRepository(mongoDB.Connection, mongoClient.Client)
 
 	questionCache := cache.NewQuestionCache(redisClient)
+	questionCache.Init(ctx, questionRepo)
 	taskCache := cache.NewTaskCache(redisClient)
+	taskCache.Init(ctx, taskRepo)
 
 	cacheManager := memo.NewCacheManager()
+	cacheManager.ExamCache.Init(ctx, examRepo)
+	cacheManager.QuestionCache.Init(ctx, questionRepo)
+	cacheManager.TaskCache.Init(ctx, taskRepo)
 
 	publisher := natsAdapter.NewExamEventProducer(natsConn, "exam.events")
 	geminiAdapter, err := gemini.NewClient(geminiClient, cfg.Gemini.ModelName)
@@ -95,7 +100,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	client := mailjet.NewMailjetClient(cfg.Mailjet.API, cfg.Mailjet.KEY)
 	mailer := mail.NewMailjetClient(client, cfg.Mailjet.From, cfg.Mailjet.Name)
 
-	examUC := usecase.NewExamUseCase(examRepo, questionRepo, taskRepo, geminiAdapter, publisher, cacheManager, mailer)
+	examUC := usecase.NewExamUseCase(examRepo, questionRepo, taskRepo, geminiAdapter, publisher, cacheManager, mailer, taskCache, questionCache)
 	questionUC := usecase.NewQuestionUseCase(questionRepo, questionCache, mailer)
 	taskUC := usecase.NewTaskUseCase(taskRepo, taskCache)
 

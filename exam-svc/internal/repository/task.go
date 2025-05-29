@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/domain"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/repository/dao"
@@ -24,30 +25,63 @@ func NewTaskRepository(db *mongo.Database, client *mongo.Client) TaskRepository 
 }
 
 func (r *taskRepository) CreateTask(ctx context.Context, task *domain.Task) error {
+	examColl := r.collection.Database().Collection("exams")
+	var examDAO dao.Exam
+	err := examColl.FindOne(ctx, bson.M{"_id": task.ExamID}).Decode(&examDAO)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return fmt.Errorf("exam with id %s not found", task.ExamID.Hex())
+		}
+		return fmt.Errorf("failed to verify exam: %w", err)
+	}
+
+	task.CreatedAt = time.Now()
+	taskDAO := dao.FromDomainTask(task)
+
+	_, err = r.collection.InsertOne(ctx, taskDAO)
+	if err != nil {
+		return fmt.Errorf("failed to insert task: %w", err)
+	}
+
+	return nil
+}
+
+func (r *taskRepository) CreateTaskWithTransaction(ctx context.Context, task *domain.Task) error {
 	session, err := r.client.StartSession()
 	if err != nil {
 		return fmt.Errorf("failed to start session: %w", err)
 	}
-	defer session.EndSession(ctx)
+	defer session.EndSession(context.Background())
 
-	_, err = session.WithTransaction(ctx, func(sessionCtx mongo.SessionContext) (interface{}, error) {
+	err = mongo.WithSession(ctx, session, func(sessionCtx mongo.SessionContext) error {
+		if err := session.StartTransaction(); err != nil {
+			return fmt.Errorf("failed to start transaction: %w", err)
+		}
+
 		examColl := r.collection.Database().Collection("exams")
 		var examDAO dao.Exam
 		err := examColl.FindOne(sessionCtx, bson.M{"_id": task.ExamID}).Decode(&examDAO)
 		if err != nil {
+			_ = session.AbortTransaction(sessionCtx)
 			if err == mongo.ErrNoDocuments {
-				return nil, fmt.Errorf("exam with id %s not found", task.ExamID.Hex())
+				return fmt.Errorf("exam with id %s not found", task.ExamID.Hex())
 			}
-			return nil, fmt.Errorf("failed to verify exam: %w", err)
+			return fmt.Errorf("failed to verify exam: %w", err)
 		}
 
+		task.CreatedAt = time.Now()
 		taskDAO := dao.FromDomainTask(task)
 		_, err = r.collection.InsertOne(sessionCtx, taskDAO)
 		if err != nil {
-			return nil, fmt.Errorf("failed to insert task: %w", err)
+			_ = session.AbortTransaction(sessionCtx)
+			return fmt.Errorf("failed to insert task: %w", err)
 		}
 
-		return nil, nil
+		if err := session.CommitTransaction(sessionCtx); err != nil {
+			return fmt.Errorf("failed to commit transaction: %w", err)
+		}
+
+		return nil
 	})
 
 	if err != nil {

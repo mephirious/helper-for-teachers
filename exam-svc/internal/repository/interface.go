@@ -14,6 +14,7 @@ type TaskRepository interface {
 	GetAllTasks(ctx context.Context) ([]domain.Task, error)
 	UpdateTask(ctx context.Context, task *domain.Task) error
 	DeleteTask(ctx context.Context, id primitive.ObjectID) error
+	CreateTaskWithTransaction(ctx context.Context, task *domain.Task) error
 }
 
 type QuestionRepository interface {
@@ -23,6 +24,7 @@ type QuestionRepository interface {
 	GetAllQuestions(ctx context.Context) ([]domain.Question, error)
 	UpdateQuestion(ctx context.Context, question *domain.Question) error
 	DeleteQuestion(ctx context.Context, id primitive.ObjectID) error
+	CreateQuestionWithTransaction(ctx context.Context, question *domain.Question) error
 }
 
 type ExamRepository interface {
@@ -33,4 +35,5 @@ type ExamRepository interface {
 	UpdateExamStatus(ctx context.Context, id primitive.ObjectID, status string) error
 	DeleteExam(ctx context.Context, id primitive.ObjectID) error
 	GetAllExams(ctx context.Context) ([]domain.Exam, error)
+	DeleteExamWithTransaction(ctx context.Context, id primitive.ObjectID) error
 }

@@ -25,31 +25,64 @@ func NewQuestionRepository(db *mongo.Database, client *mongo.Client) QuestionRep
 }
 
 func (r *questionRepository) CreateQuestion(ctx context.Context, question *domain.Question) error {
+	examColl := r.collection.Database().Collection("exams")
+	var examDAO dao.Exam
+	err := examColl.FindOne(ctx, bson.M{"_id": question.ExamID}).Decode(&examDAO)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return fmt.Errorf("exam with id %s not found", question.ExamID.Hex())
+		}
+		return fmt.Errorf("failed to verify exam: %w", err)
+	}
+
+	question.ID = primitive.NewObjectID()
+	question.CreatedAt = time.Now()
+
+	_, err = r.collection.InsertOne(ctx, dao.FromDomainQuestion(question))
+	if err != nil {
+		return fmt.Errorf("failed to insert question: %w", err)
+	}
+
+	return nil
+}
+
+func (r *questionRepository) CreateQuestionWithTransaction(ctx context.Context, question *domain.Question) error {
 	session, err := r.client.StartSession()
 	if err != nil {
 		return fmt.Errorf("failed to start session: %w", err)
 	}
-	defer session.EndSession(ctx)
+	defer session.EndSession(context.Background())
 
-	_, err = session.WithTransaction(ctx, func(sessionCtx mongo.SessionContext) (interface{}, error) {
+	err = mongo.WithSession(ctx, session, func(sessionCtx mongo.SessionContext) error {
+		if err := session.StartTransaction(); err != nil {
+			return fmt.Errorf("failed to start transaction: %w", err)
+		}
+
 		examColl := r.collection.Database().Collection("exams")
 		var examDAO dao.Exam
 		err := examColl.FindOne(sessionCtx, bson.M{"_id": question.ExamID}).Decode(&examDAO)
 		if err != nil {
+			_ = session.AbortTransaction(sessionCtx)
 			if err == mongo.ErrNoDocuments {
-				return nil, fmt.Errorf("exam with id %s not found", question.ExamID.Hex())
+				return fmt.Errorf("exam with id %s not found", question.ExamID.Hex())
 			}
-			return nil, fmt.Errorf("failed to verify exam: %w", err)
+			return fmt.Errorf("failed to verify exam: %w", err)
 		}
 
 		question.ID = primitive.NewObjectID()
 		question.CreatedAt = time.Now()
+
 		_, err = r.collection.InsertOne(sessionCtx, dao.FromDomainQuestion(question))
 		if err != nil {
-			return nil, fmt.Errorf("failed to insert question: %w", err)
+			_ = session.AbortTransaction(sessionCtx)
+			return fmt.Errorf("failed to insert question: %w", err)
 		}
 
-		return nil, nil
+		if err := session.CommitTransaction(sessionCtx); err != nil {
+			return fmt.Errorf("failed to commit transaction: %w", err)
+		}
+
+		return nil
 	})
 
 	if err != nil {

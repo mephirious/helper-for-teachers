@@ -10,6 +10,7 @@ import (
 	inmemory "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/in-memory"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/mailjet"
 	nats "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/nats"
+	redis "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/redis/cache"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/domain"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/repository"
 	pb "github.com/mephirious/helper-for-teachers/services/exam-svc/proto"
@@ -17,24 +18,28 @@ import (
 )
 
 type examUseCase struct {
-	examRepo     repository.ExamRepository
-	questionRepo repository.QuestionRepository
-	taskRepo     repository.TaskRepository
-	geminiClient *gemini.Client
-	publisher    *nats.ExamEventProducer
-	cache        *inmemory.CacheManager
-	mailjet      *mailjet.MailjetClient
+	examRepo      repository.ExamRepository
+	questionRepo  repository.QuestionRepository
+	taskRepo      repository.TaskRepository
+	geminiClient  *gemini.Client
+	publisher     *nats.ExamEventProducer
+	cache         *inmemory.CacheManager
+	mailjet       *mailjet.MailjetClient
+	taskCache     *redis.TaskCache
+	questionCache *redis.QuestionCache
 }
 
-func NewExamUseCase(examRepo repository.ExamRepository, questionRepo repository.QuestionRepository, taskRepo repository.TaskRepository, geminiClient *gemini.Client, publisher *nats.ExamEventProducer, cache *inmemory.CacheManager, mailjetClient *mailjet.MailjetClient) ExamUseCase {
+func NewExamUseCase(examRepo repository.ExamRepository, questionRepo repository.QuestionRepository, taskRepo repository.TaskRepository, geminiClient *gemini.Client, publisher *nats.ExamEventProducer, cache *inmemory.CacheManager, mailjetClient *mailjet.MailjetClient, task *redis.TaskCache, question *redis.QuestionCache) ExamUseCase {
 	return &examUseCase{
-		examRepo:     examRepo,
-		questionRepo: questionRepo,
-		taskRepo:     taskRepo,
-		geminiClient: geminiClient,
-		publisher:    publisher,
-		cache:        cache,
-		mailjet:      mailjetClient,
+		examRepo:      examRepo,
+		questionRepo:  questionRepo,
+		taskRepo:      taskRepo,
+		geminiClient:  geminiClient,
+		publisher:     publisher,
+		cache:         cache,
+		mailjet:       mailjetClient,
+		taskCache:     task,
+		questionCache: question,
 	}
 }
 
@@ -216,6 +221,22 @@ func (uc *examUseCase) GenerateExamUsingAI(ctx context.Context, userID primitive
 	examID := primitive.NewObjectID()
 	now := time.Now()
 
+	var questions []domain.Question
+	for _, q := range result.Questions {
+		q.ID = primitive.NewObjectID()
+		q.ExamID = examID
+		q.CreatedAt = now
+		questions = append(questions, q)
+	}
+
+	var tasks []domain.Task
+	for _, t := range result.Tasks {
+		t.ID = primitive.NewObjectID()
+		t.ExamID = examID
+		t.CreatedAt = now
+		tasks = append(tasks, t)
+	}
+
 	exam := &domain.Exam{
 		ID:          examID,
 		Title:       result.Title,
@@ -229,31 +250,20 @@ func (uc *examUseCase) GenerateExamUsingAI(ctx context.Context, userID primitive
 	if err := uc.examRepo.CreateExam(ctx, exam); err != nil {
 		return nil, fmt.Errorf("failed to save generated exam: %w", err)
 	}
-
 	uc.cache.ExamCache.Set(*exam)
 
-	var questions []domain.Question
-	for _, q := range result.Questions {
-		q.ID = primitive.NewObjectID()
-		q.ExamID = examID
-		q.CreatedAt = now
-
+	for _, q := range questions {
 		if err := uc.questionRepo.CreateQuestion(ctx, &q); err != nil {
 			return nil, fmt.Errorf("failed to save question: %w", err)
 		}
-		questions = append(questions, q)
+		uc.questionCache.Set(ctx, q)
 	}
 
-	var tasks []domain.Task
-	for _, t := range result.Tasks {
-		t.ID = primitive.NewObjectID()
-		t.ExamID = examID
-		t.CreatedAt = now
-
+	for _, t := range tasks {
 		if err := uc.taskRepo.CreateTask(ctx, &t); err != nil {
 			return nil, fmt.Errorf("failed to save task: %w", err)
 		}
-		tasks = append(tasks, t)
+		uc.taskCache.Set(ctx, t)
 	}
 
 	return &domain.ExamDetailed{

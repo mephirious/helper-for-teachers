@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/domain"
@@ -25,7 +26,6 @@ func NewExamRepository(db *mongo.Database, client *mongo.Client) ExamRepository 
 }
 
 func (r *examRepository) CreateExam(ctx context.Context, exam *domain.Exam) error {
-	exam.ID = primitive.NewObjectID()
 	exam.CreatedAt = time.Now()
 	exam.UpdatedAt = exam.CreatedAt
 
@@ -92,36 +92,70 @@ func (r *examRepository) UpdateExam(ctx context.Context, exam *domain.Exam) erro
 	return err
 }
 
-func (r *examRepository) DeleteExam(ctx context.Context, id primitive.ObjectID) error {
+func (r *examRepository) DeleteExamWithTransaction(ctx context.Context, id primitive.ObjectID) error {
 	session, err := r.client.StartSession()
 	if err != nil {
 		return fmt.Errorf("failed to start session: %w", err)
 	}
 	defer session.EndSession(ctx)
 
+	log.Printf("Starting transaction for DeleteExam, exam_id: %s", id.Hex())
 	_, err = session.WithTransaction(ctx, func(sessionCtx mongo.SessionContext) (interface{}, error) {
-		_, err := r.collection.DeleteOne(sessionCtx, bson.M{"_id": id})
+		examColl := r.collection.Database().Collection("exams")
+		result, err := examColl.DeleteOne(sessionCtx, bson.M{"_id": id})
 		if err != nil {
+			log.Printf("Failed to delete exam %s: %v", id.Hex(), err)
 			return nil, fmt.Errorf("failed to delete exam: %w", err)
 		}
+		log.Printf("Deleted %d exam(s) with id: %s", result.DeletedCount, id.Hex())
 
 		taskColl := r.collection.Database().Collection("tasks")
-		_, err = taskColl.DeleteMany(sessionCtx, bson.M{"exam_id": id})
+		taskResult, err := taskColl.DeleteMany(sessionCtx, bson.M{"exam_id": id})
 		if err != nil {
+			log.Printf("Failed to delete tasks for exam %s: %v", id.Hex(), err)
 			return nil, fmt.Errorf("failed to delete tasks: %w", err)
 		}
+		log.Printf("Deleted %d task(s) for exam_id: %s", taskResult.DeletedCount, id.Hex())
 
 		questionColl := r.collection.Database().Collection("questions")
-		_, err = questionColl.DeleteMany(sessionCtx, bson.M{"exam_id": id})
+		questionResult, err := questionColl.DeleteMany(sessionCtx, bson.M{"exam_id": id})
 		if err != nil {
+			log.Printf("Failed to delete questions for exam %s: %v", id.Hex(), err)
 			return nil, fmt.Errorf("failed to delete questions: %w", err)
 		}
+		log.Printf("Deleted %d question(s) for exam_id: %s", questionResult.DeletedCount, id.Hex())
 
 		return nil, nil
 	})
 
 	if err != nil {
+		log.Printf("Transaction failed for exam_id %s: %v", id.Hex(), err)
 		return fmt.Errorf("transaction failed: %w", err)
+	}
+
+	log.Printf("Transaction committed for exam_id: %s", id.Hex())
+	return nil
+}
+
+func (r *examRepository) DeleteExam(ctx context.Context, id primitive.ObjectID) error {
+	db := r.collection.Database()
+
+	examColl := db.Collection("exams")
+	_, err := examColl.DeleteOne(ctx, bson.M{"_id": id})
+	if err != nil {
+		return fmt.Errorf("failed to delete exam: %w", err)
+	}
+
+	taskColl := db.Collection("tasks")
+	_, err = taskColl.DeleteMany(ctx, bson.M{"exam_id": id})
+	if err != nil {
+		return fmt.Errorf("failed to delete tasks: %w", err)
+	}
+
+	questionColl := db.Collection("questions")
+	_, err = questionColl.DeleteMany(ctx, bson.M{"exam_id": id})
+	if err != nil {
+		return fmt.Errorf("failed to delete questions: %w", err)
 	}
 
 	return nil

@@ -9,6 +9,6 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o exam-svc ./cmd/main.go
+RUN go build -o exam-svc ./cmd/exam/main.go
 
 CMD ["./exam-svc"]
