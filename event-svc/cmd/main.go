@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 
+	natss "event-scv/internal/adapters/outbound/nats"
 	"event-svc/internal/adapters/inbound/grpc"
 	"event-svc/internal/adapters/outbound/repository/postgres"
 	schedule "event-svc/internal/app/lesson"
@@ -13,9 +14,6 @@ import (
 	config "event-svc/pkg/config"
 
 	eventsv1 "github.com/suyundykovv/margulan-protos/gen/go/events/v1"
-
-	"github.com/nats-io/nats.go"
-	"google.golang.org/grpc"
 )
 
 func main() {
@@ -27,7 +25,7 @@ func main() {
 	}
 	defer db.Close()
 
-	nc, err := nats.Connect(cfg.NATS.URL, 5, 5)
+	nc, err := natss.Connect(cfg.NATS.URL, 5, 5)
 	if err != nil {
 		log.Fatalf("Failed to connect to NATS: %v", err)
 	}

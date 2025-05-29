@@ -40,7 +40,6 @@ func NewSchoolEventPublisher(natsURL string, logger *zap.Logger) (*SchoolEventPu
 		return nil, fmt.Errorf("failed to create JetStream context: %w", err)
 	}
 
-	// Создаем потоки для уроков и заданий
 	streamConfigs := []*nats.StreamConfig{
 		{
 			Name:     "SCHOOL_LESSONS",
