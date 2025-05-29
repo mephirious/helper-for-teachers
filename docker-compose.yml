@@ -1,0 +1,50 @@
+
+services:
+  nats:
+    image: nats:2.9.0-alpine
+    ports:
+      - "4222:4222"
+      - "8222:8222"  # Monitoring port
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  event-service:
+    build:
+      context: ./event-svc
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: db-event
+      DB_PORT: 5432
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: event_service_db
+      NATS_URL: nats://nats:4222  # Added NATS connection
+
+    depends_on:
+      - db-event
+      - nats
+    networks:
+      - app-network
+
+  db-event:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: event_service_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - db_event_data:/var/lib/postgresql/data
+      - ./event-svc/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+volumes:
+  db_event_data:
+
+networks:
+  app-network:
+    driver: bridge
