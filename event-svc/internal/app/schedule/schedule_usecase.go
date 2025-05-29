@@ -1,168 +1,173 @@
-package task
+package schedule
 
 import (
 	"context"
-	"errors"
-	"log"
-	"time"
-
 	"event-svc/internal/domain/model"
 	"event-svc/internal/ports/outbound/repository"
+	"fmt"
 )
 
-type TaskUseCase struct {
-	repo           repository.TaskRepository
-	eventPublisher ports.EventPublisher
-	notifier       ports.Notifier
+type ScheduleUseCase struct {
+	repo repository.ScheduleRepository
 }
 
-func NewTaskUseCase(
-	repo repository.TaskRepository,
-	eventPublisher ports.EventPublisher,
-	notifier ports.Notifier,
-) *TaskUseCase {
-	return &TaskUseCase{
-		repo:           repo,
-		eventPublisher: eventPublisher,
-		notifier:       notifier,
-	}
+func NewScheduleUseCase(repo repository.ScheduleRepository) *ScheduleUseCase {
+	return &ScheduleUseCase{repo: repo}
 }
 
-func (uc *TaskUseCase) CreateTask(ctx context.Context, task *model.Task) (*model.Task, error) {
-	if err := validateTask(task); err != nil {
-		return nil, err
+// Lesson Schedule CRUD Operations
+
+func (uc *ScheduleUseCase) CreateLessonSchedule(ctx context.Context, schedule *model.LessonSchedule) (*model.LessonSchedule, error) {
+	if err := schedule.Validate(); err != nil {
+		return nil, fmt.Errorf("lesson schedule validation error: %w", err)
 	}
 
-	task.ID = generateID()
-	task.CreatedAt = time.Now()
-	task.UpdatedAt = time.Now()
-
-	if err := uc.repo.Create(ctx, task); err != nil {
-		return nil, err
-	}
-
-	// Publish event
-	if err := uc.eventPublisher.PublishTaskCreated(ctx, task); err != nil {
-		// Log error but don't fail the operation
-		log.Printf("failed to publish task created event: %v", err)
-	}
-
-	// Send notifications
-	if err := uc.notifier.NotifyTaskAssigned(ctx, task); err != nil {
-		log.Printf("failed to send task notifications: %v", err)
-	}
-
-	return task, nil
-}
-
-func (uc *TaskUseCase) GetTask(ctx context.Context, id string) (*model.Task, error) {
-	if id == "" {
-		return nil, errors.New("task ID is required")
-	}
-	return uc.repo.GetByID(ctx, id)
-}
-
-func (uc *TaskUseCase) UpdateTask(ctx context.Context, task *model.Task) (*model.Task, error) {
-	if task.ID == "" {
-		return nil, errors.New("task ID is required")
-	}
-
-	existing, err := uc.repo.GetByID(ctx, task.ID)
+	id, err := uc.repo.CreateLessonSchedule(ctx, schedule)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create lesson schedule: %w", err)
 	}
 
-	// Preserve immutable fields
-	task.CreatedAt = existing.CreatedAt
-	task.UpdatedAt = time.Now()
-
-	if err := validateTask(task); err != nil {
-		return nil, err
-	}
-
-	if err := uc.repo.Update(ctx, task); err != nil {
-		return nil, err
-	}
-
-	// Publish update event if status changed
-	if existing.Status != task.Status {
-		if err := uc.eventPublisher.PublishTaskStatusChanged(ctx, existing, task); err != nil {
-			log.Printf("failed to publish task status changed event: %v", err)
-		}
-	}
-
-	return task, nil
-}
-
-func (uc *TaskUseCase) DeleteTask(ctx context.Context, id string) error {
-	if id == "" {
-		return errors.New("task ID is required")
-	}
-	return uc.repo.Delete(ctx, id)
-}
-
-func (uc *TaskUseCase) ListTasks(ctx context.Context, filter repository.TaskFilter) ([]*model.Task, error) {
-	return uc.repo.ListByFilter(ctx, filter)
-}
-
-func (uc *TaskUseCase) GradeTask(ctx context.Context, taskID string, score int32) (*model.Task, error) {
-	if taskID == "" {
-		return nil, errors.New("task ID is required")
-	}
-
-	task, err := uc.repo.GetByID(ctx, taskID)
+	createdSchedule, err := uc.repo.GetLessonSchedule(ctx, id)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get created lesson schedule: %w", err)
 	}
 
-	if task.MaxScore == nil || *task.MaxScore == 0 {
-		return nil, errors.New("task is not gradable")
-	}
-
-	if score < 0 || score > *task.MaxScore {
-		return nil, errors.New("invalid score")
-	}
-
-	task.Status = model.TaskGraded
-	task.UpdatedAt = time.Now()
-
-	if err := uc.repo.Update(ctx, task); err != nil {
-		return nil, err
-	}
-
-	// Publish grading event
-	if err := uc.eventPublisher.PublishTaskGraded(ctx, task); err != nil {
-		log.Printf("failed to publish task graded event: %v", err)
-	}
-
-	// Send grade notification
-	if err := uc.notifier.NotifyTaskGraded(ctx, task); err != nil {
-		log.Printf("failed to send grade notification: %v", err)
-	}
-
-	return task, nil
+	return createdSchedule, nil
 }
 
-func validateTask(task *model.Task) error {
-	if task.Title == "" {
-		return errors.New("title is required")
+func (uc *ScheduleUseCase) GetLessonSchedule(ctx context.Context, id string) (*model.LessonSchedule, error) {
+	if id == "" {
+		return nil, model.ErrInvalidID
 	}
-	if task.DueDate.IsZero() {
-		return errors.New("due date is required")
+
+	schedule, err := uc.repo.GetLessonSchedule(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get lesson schedule: %w", err)
 	}
-	if task.GroupID == "" {
-		return errors.New("group ID is required")
-	}
-	if task.CourseID == "" {
-		return errors.New("course ID is required")
-	}
-	if task.Type < model.TaskExam || task.Type > model.TaskProject {
-		return errors.New("invalid task type")
-	}
-	return nil
+
+	return schedule, nil
 }
 
-func generateID() string {
-	// Implement your ID generation logic
-	return "generated-id"
+func (uc *ScheduleUseCase) UpdateLessonSchedule(ctx context.Context, schedule *model.LessonSchedule) (*model.LessonSchedule, error) {
+	if err := schedule.Validate(); err != nil {
+		return nil, fmt.Errorf("lesson schedule validation error: %w", err)
+	}
+
+	if err := uc.repo.UpdateLessonSchedule(ctx, schedule); err != nil {
+		return nil, fmt.Errorf("failed to update lesson schedule: %w", err)
+	}
+
+	updatedSchedule, err := uc.repo.GetLessonSchedule(ctx, schedule.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get updated lesson schedule: %w", err)
+	}
+
+	return updatedSchedule, nil
+}
+
+func (uc *ScheduleUseCase) DeleteLessonSchedule(ctx context.Context, id string) error {
+	if id == "" {
+		return model.ErrInvalidID
+	}
+
+	return uc.repo.DeleteLessonSchedule(ctx, id)
+}
+
+func (uc *ScheduleUseCase) ListLessonSchedules(ctx context.Context) ([]*model.LessonSchedule, error) {
+	schedules, err := uc.repo.ListLessonSchedules(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list lesson schedules: %w", err)
+	}
+
+	return schedules, nil
+}
+
+// Task Schedule CRUD Operations
+
+func (uc *ScheduleUseCase) CreateTaskSchedule(ctx context.Context, schedule *model.TaskSchedule) (*model.TaskSchedule, error) {
+	if err := schedule.Validate(); err != nil {
+		return nil, fmt.Errorf("task schedule validation error: %w", err)
+	}
+
+	id, err := uc.repo.CreateTaskSchedule(ctx, schedule)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create task schedule: %w", err)
+	}
+
+	createdSchedule, err := uc.repo.GetTaskSchedule(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get created task schedule: %w", err)
+	}
+
+	return createdSchedule, nil
+}
+
+func (uc *ScheduleUseCase) GetTaskSchedule(ctx context.Context, id string) (*model.TaskSchedule, error) {
+	if id == "" {
+		return nil, model.ErrInvalidID
+	}
+
+	schedule, err := uc.repo.GetTaskSchedule(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get task schedule: %w", err)
+	}
+
+	return schedule, nil
+}
+
+func (uc *ScheduleUseCase) UpdateTaskSchedule(ctx context.Context, schedule *model.TaskSchedule) (*model.TaskSchedule, error) {
+	if err := schedule.Validate(); err != nil {
+		return nil, fmt.Errorf("task schedule validation error: %w", err)
+	}
+
+	if err := uc.repo.UpdateTaskSchedule(ctx, schedule); err != nil {
+		return nil, fmt.Errorf("failed to update task schedule: %w", err)
+	}
+
+	updatedSchedule, err := uc.repo.GetTaskSchedule(ctx, schedule.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get updated task schedule: %w", err)
+	}
+
+	return updatedSchedule, nil
+}
+
+func (uc *ScheduleUseCase) DeleteTaskSchedule(ctx context.Context, id string) error {
+	if id == "" {
+		return model.ErrInvalidID
+	}
+
+	return uc.repo.DeleteTaskSchedule(ctx, id)
+}
+
+func (uc *ScheduleUseCase) ListTaskSchedules(ctx context.Context) ([]*model.TaskSchedule, error) {
+	schedules, err := uc.repo.ListTaskSchedules(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list task schedules: %w", err)
+	}
+
+	return schedules, nil
+}
+
+// Combined Operations
+
+func (uc *ScheduleUseCase) GetSchedulesForGroup(ctx context.Context, groupID string) (*model.GroupSchedules, error) {
+	if groupID == "" {
+		return nil, model.ErrInvalidID
+	}
+
+	lessonSchedules, err := uc.repo.ListLessonSchedulesByGroup(ctx, groupID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get lesson schedules for group: %w", err)
+	}
+
+	taskSchedules, err := uc.repo.ListTaskSchedulesByGroup(ctx, groupID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get task schedules for group: %w", err)
+	}
+
+	return &model.GroupSchedules{
+		LessonSchedules: lessonSchedules,
+		TaskSchedules:   taskSchedules,
+	}, nil
 }

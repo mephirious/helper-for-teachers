@@ -5,12 +5,13 @@ go 1.23.0
 toolchain go1.23.4
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/suyundykovv/margulan-protos v0.0.1
 	go.uber.org/zap v1.27.0
 )
 
 require (
-	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/stretchr/testify v1.10.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 )
 
@@ -18,7 +19,6 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/lib/pq v1.10.9
-	github.com/mailersend/mailersend-go v1.6.1
 	github.com/nats-io/nats.go v1.42.0
 	github.com/nats-io/nkeys v0.4.11 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect

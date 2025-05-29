@@ -2,167 +2,104 @@ package task
 
 import (
 	"context"
-	"errors"
-	"log"
-	"time"
-
 	"event-svc/internal/domain/model"
 	"event-svc/internal/ports/outbound/repository"
+	"fmt"
 )
 
 type TaskUseCase struct {
-	repo           repository.TaskRepository
-	eventPublisher ports.EventPublisher
-	notifier       ports.Notifier
+	repo repository.TaskRepository
 }
 
-func NewTaskUseCase(
-	repo repository.TaskRepository,
-	eventPublisher ports.EventPublisher,
-	notifier ports.Notifier,
-) *TaskUseCase {
-	return &TaskUseCase{
-		repo:           repo,
-		eventPublisher: eventPublisher,
-		notifier:       notifier,
-	}
+func NewTaskUseCase(repo repository.TaskRepository) *TaskUseCase {
+	return &TaskUseCase{repo: repo}
 }
 
 func (uc *TaskUseCase) CreateTask(ctx context.Context, task *model.Task) (*model.Task, error) {
-	if err := validateTask(task); err != nil {
-		return nil, err
+	if err := task.Validate(); err != nil {
+		return nil, fmt.Errorf("validation error: %w", err)
 	}
 
-	task.ID = generateID()
-	task.CreatedAt = time.Now()
-	task.UpdatedAt = time.Now()
-
-	if err := uc.repo.Create(ctx, task); err != nil {
-		return nil, err
+	id, err := uc.repo.CreateTask(ctx, task)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create task: %w", err)
 	}
 
-	// Publish event
-	if err := uc.eventPublisher.PublishTaskCreated(ctx, task); err != nil {
-		// Log error but don't fail the operation
-		log.Printf("failed to publish task created event: %v", err)
+	createdTask, err := uc.repo.GetTask(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get created task: %w", err)
 	}
 
-	// Send notifications
-	if err := uc.notifier.NotifyTaskAssigned(ctx, task); err != nil {
-		log.Printf("failed to send task notifications: %v", err)
-	}
-
-	return task, nil
+	return createdTask, nil
 }
 
 func (uc *TaskUseCase) GetTask(ctx context.Context, id string) (*model.Task, error) {
 	if id == "" {
-		return nil, errors.New("task ID is required")
-	}
-	return uc.repo.GetByID(ctx, id)
-}
-
-func (uc *TaskUseCase) UpdateTask(ctx context.Context, task *model.Task) (*model.Task, error) {
-	if task.ID == "" {
-		return nil, errors.New("task ID is required")
+		return nil, model.ErrInvalidID
 	}
 
-	existing, err := uc.repo.GetByID(ctx, task.ID)
+	task, err := uc.repo.GetTask(ctx, id)
 	if err != nil {
-		return nil, err
-	}
-
-	// Preserve immutable fields
-	task.CreatedAt = existing.CreatedAt
-	task.UpdatedAt = time.Now()
-
-	if err := validateTask(task); err != nil {
-		return nil, err
-	}
-
-	if err := uc.repo.Update(ctx, task); err != nil {
-		return nil, err
-	}
-
-	// Publish update event if status changed
-	if existing.Status != task.Status {
-		if err := uc.eventPublisher.PublishTaskStatusChanged(ctx, existing, task); err != nil {
-			log.Printf("failed to publish task status changed event: %v", err)
-		}
+		return nil, fmt.Errorf("failed to get task: %w", err)
 	}
 
 	return task, nil
+}
+
+func (uc *TaskUseCase) UpdateTask(ctx context.Context, task *model.Task) (*model.Task, error) {
+	if err := task.Validate(); err != nil {
+		return nil, fmt.Errorf("validation error: %w", err)
+	}
+
+	if err := uc.repo.UpdateTask(ctx, task); err != nil {
+		return nil, fmt.Errorf("failed to update task: %w", err)
+	}
+
+	updatedTask, err := uc.repo.GetTask(ctx, task.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get updated task: %w", err)
+	}
+
+	return updatedTask, nil
 }
 
 func (uc *TaskUseCase) DeleteTask(ctx context.Context, id string) error {
 	if id == "" {
-		return errors.New("task ID is required")
-	}
-	return uc.repo.Delete(ctx, id)
-}
-
-func (uc *TaskUseCase) ListTasks(ctx context.Context, filter repository.TaskFilter) ([]*model.Task, error) {
-	return uc.repo.ListByFilter(ctx, filter)
-}
-
-func (uc *TaskUseCase) GradeTask(ctx context.Context, taskID string, score int32) (*model.Task, error) {
-	if taskID == "" {
-		return nil, errors.New("task ID is required")
+		return model.ErrInvalidID
 	}
 
-	task, err := uc.repo.GetByID(ctx, taskID)
+	return uc.repo.DeleteTask(ctx, id)
+}
+
+func (uc *TaskUseCase) ListTasks(ctx context.Context) ([]*model.Task, error) {
+	tasks, err := uc.repo.ListTasks(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to list tasks: %w", err)
 	}
 
-	if task.MaxScore == nil || *task.MaxScore == 0 {
-		return nil, errors.New("task is not gradable")
-	}
-
-	if score < 0 || score > *task.MaxScore {
-		return nil, errors.New("invalid score")
-	}
-
-	task.Status = model.TaskGraded
-	task.UpdatedAt = time.Now()
-
-	if err := uc.repo.Update(ctx, task); err != nil {
-		return nil, err
-	}
-
-	// Publish grading event
-	if err := uc.eventPublisher.PublishTaskGraded(ctx, task); err != nil {
-		log.Printf("failed to publish task graded event: %v", err)
-	}
-
-	// Send grade notification
-	if err := uc.notifier.NotifyTaskGraded(ctx, task); err != nil {
-		log.Printf("failed to send grade notification: %v", err)
-	}
-
-	return task, nil
+	return tasks, nil
 }
 
-func validateTask(task *model.Task) error {
-	if task.Title == "" {
-		return errors.New("title is required")
+func (uc *TaskUseCase) BatchCreateTasks(ctx context.Context, tasks []*model.Task) ([]*model.Task, error) {
+	for _, task := range tasks {
+		if err := task.Validate(); err != nil {
+			return nil, fmt.Errorf("validation error: %w", err)
+		}
 	}
-	if task.DueDate.IsZero() {
-		return errors.New("due date is required")
-	}
-	if task.GroupID == "" {
-		return errors.New("group ID is required")
-	}
-	if task.CourseID == "" {
-		return errors.New("course ID is required")
-	}
-	if task.Type < model.TaskExam || task.Type > model.TaskProject {
-		return errors.New("invalid task type")
-	}
-	return nil
-}
 
-func generateID() string {
-	// Implement your ID generation logic
-	return "generated-id"
+	ids, err := uc.repo.BatchCreateTasks(ctx, tasks)
+	if err != nil {
+		return nil, fmt.Errorf("failed to batch create tasks: %w", err)
+	}
+
+	var createdTasks []*model.Task
+	for _, id := range ids {
+		task, err := uc.repo.GetTask(ctx, id)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get created task: %w", err)
+		}
+		createdTasks = append(createdTasks, task)
+	}
+
+	return createdTasks, nil
 }

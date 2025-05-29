@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type Task struct {
 	ID               string
@@ -37,3 +40,13 @@ const (
 	TaskGraded
 	TaskArchived
 )
+
+func (t *Task) Validate() error {
+	if t.Title == "" {
+		return fmt.Errorf("title is required")
+	}
+	if t.DueDate.IsZero() {
+		return fmt.Errorf("due date is required")
+	}
+	return nil
+}

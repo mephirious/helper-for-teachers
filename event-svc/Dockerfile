@@ -1,16 +1,16 @@
-FROM golang:1.19 as builder
+FROM golang:1.23
 
 WORKDIR /app
+
+# Copy module files and download dependencies
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the entire project
 COPY . .
 
-RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux go build -o event-svc ./cmd/main.go
+# Expose the port used by the API Gateway
+EXPOSE 8080
 
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
-
-WORKDIR /root/
-COPY --from=builder /app/event-svc .
-
-EXPOSE 50051
-CMD ["./event-svc"]
+# Run the Go application directly
+CMD ["go", "run", "./cmd/main.go"]

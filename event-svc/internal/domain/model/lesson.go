@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type Lesson struct {
 	ID          string
@@ -29,4 +32,16 @@ const (
 
 func (s LessonStatus) String() string {
 	return [...]string{"planned", "in_progress", "completed", "canceled"}[s]
+}
+func (l *Lesson) Validate() error {
+	if l.Title == "" {
+		return fmt.Errorf("title is required")
+	}
+	if l.StartTime.IsZero() || l.EndTime.IsZero() {
+		return fmt.Errorf("start and end time are required")
+	}
+	if l.StartTime.After(l.EndTime) {
+		return fmt.Errorf("start time must be before end time")
+	}
+	return nil
 }

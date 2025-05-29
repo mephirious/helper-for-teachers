@@ -1,35 +1,19 @@
 package main
 
 import (
-	"log"
-	"net"
-	"os"
-
-	natss "event-scv/internal/adapters/outbound/nats"
 	"event-svc/internal/adapters/inbound/grpc"
-	"event-svc/internal/adapters/outbound/repository/postgres"
-	schedule "event-svc/internal/app/lesson"
-	task "event-svc/internal/app/schedule"
+	postgres "event-svc/internal/adapters/outbound/repository/postgres"
+	"event-svc/internal/app/lesson"
+	"event-svc/internal/app/schedule"
 	"event-svc/internal/app/task"
-	config "event-svc/pkg/config"
-
-	eventsv1 "github.com/suyundykovv/margulan-protos/gen/go/events/v1"
+	"event-svc/pkg/config"
+	"log"
 )
 
 func main() {
-	cfg := config.Load()
-
-	db, err := config.InitDB()
-	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
-	}
+	// Initialize database connection
+	db, _ := config.InitDB()
 	defer db.Close()
-
-	nc, err := natss.Connect(cfg.NATS.URL, 5, 5)
-	if err != nil {
-		log.Fatalf("Failed to connect to NATS: %v", err)
-	}
-	defer nc.Close()
 
 	// Initialize repositories
 	lessonRepo := postgres.NewLessonRepository(db)
@@ -41,24 +25,10 @@ func main() {
 	taskUC := task.NewTaskUseCase(taskRepo)
 	scheduleUC := schedule.NewScheduleUseCase(scheduleRepo)
 
-	// Create gRPC server
-	grpcServer := grpc.NewServer()
-	eventService := grpc.NewEventServiceServer(lessonUC, taskUC, scheduleUC)
-	eventsv1.RegisterEventServiceServer(grpcServer, eventService)
+	// Create and start gRPC server
+	grpcServer := grpc.NewServer(lessonUC, taskUC, scheduleUC)
 
-	// Start server
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "50051"
-	}
-
-	lis, err := net.Listen("tcp", ":"+port)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-
-	log.Printf("Server started on port %s", port)
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+	if err := grpcServer.Start(":50051"); err != nil {
+		log.Fatalf("Failed to start gRPC server: %v", err)
 	}
 }

@@ -6,14 +6,26 @@ import (
 	"time"
 )
 
+// TaskRepository defines the interface for task persistence operations
 type TaskRepository interface {
-	Create(ctx context.Context, task *model.Task) error
-	GetByID(ctx context.Context, id string) (*model.Task, error)
-	Update(ctx context.Context, task *model.Task) error
-	Delete(ctx context.Context, id string) error
-	ListByFilter(ctx context.Context, filter TaskFilter) ([]*model.Task, error)
-}
+	// CreateTask persists a new task and returns its ID
+	CreateTask(ctx context.Context, task *model.Task) (string, error)
 
+	// GetTask retrieves a task by its ID
+	GetTask(ctx context.Context, id string) (*model.Task, error)
+
+	// UpdateTask modifies an existing task
+	UpdateTask(ctx context.Context, task *model.Task) error
+
+	// DeleteTask removes a task by its ID
+	DeleteTask(ctx context.Context, id string) error
+
+	// ListTasks retrieves all tasks
+	ListTasks(ctx context.Context) ([]*model.Task, error)
+
+	// BatchCreateTasks creates multiple tasks in a single transaction
+	BatchCreateTasks(ctx context.Context, tasks []*model.Task) ([]string, error)
+}
 type TaskFilter struct {
 	GroupID  *string
 	CourseID *string
