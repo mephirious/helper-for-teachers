@@ -13,18 +13,48 @@ import (
 
 type taskRepository struct {
 	collection *mongo.Collection
+	client     *mongo.Client
 }
 
-func NewTaskRepository(db *mongo.Database) TaskRepository {
+func NewTaskRepository(db *mongo.Database, client *mongo.Client) TaskRepository {
 	return &taskRepository{
 		collection: db.Collection("tasks"),
+		client:     client,
 	}
 }
 
 func (r *taskRepository) CreateTask(ctx context.Context, task *domain.Task) error {
-	taskDAO := dao.FromDomainTask(task)
-	_, err := r.collection.InsertOne(ctx, taskDAO)
-	return err
+	session, err := r.client.StartSession()
+	if err != nil {
+		return fmt.Errorf("failed to start session: %w", err)
+	}
+	defer session.EndSession(ctx)
+
+	_, err = session.WithTransaction(ctx, func(sessionCtx mongo.SessionContext) (interface{}, error) {
+		examColl := r.collection.Database().Collection("exams")
+		var examDAO dao.Exam
+		err := examColl.FindOne(sessionCtx, bson.M{"_id": task.ExamID}).Decode(&examDAO)
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				return nil, fmt.Errorf("exam with id %s not found", task.ExamID.Hex())
+			}
+			return nil, fmt.Errorf("failed to verify exam: %w", err)
+		}
+
+		taskDAO := dao.FromDomainTask(task)
+		_, err = r.collection.InsertOne(sessionCtx, taskDAO)
+		if err != nil {
+			return nil, fmt.Errorf("failed to insert task: %w", err)
+		}
+
+		return nil, nil
+	})
+
+	if err != nil {
+		return fmt.Errorf("transaction failed: %w", err)
+	}
+
+	return nil
 }
 
 func (r *taskRepository) GetTaskByID(ctx context.Context, id primitive.ObjectID) (*domain.Task, error) {

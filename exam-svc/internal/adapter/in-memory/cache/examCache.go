@@ -1,9 +1,12 @@
 package cache
 
 import (
+	"context"
 	"sync"
+	"time"
 
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/domain"
+	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/repository"
 )
 
 type ExamCache struct {
@@ -14,6 +17,46 @@ type ExamCache struct {
 func NewExamCache() *ExamCache {
 	return &ExamCache{
 		data: make(map[string]domain.Exam),
+	}
+}
+
+func (c *ExamCache) Init(ctx context.Context, repo repository.ExamRepository) error {
+	if err := c.refresh(ctx, repo); err != nil {
+		return err
+	}
+
+	go c.startRefreshLoop(ctx, repo)
+	return nil
+}
+
+func (c *ExamCache) refresh(ctx context.Context, repo repository.ExamRepository) error {
+	exams, err := repo.GetAllExams(ctx)
+	if err != nil {
+		return err
+	}
+
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.data = make(map[string]domain.Exam, len(exams))
+	for _, exam := range exams {
+		c.data[exam.ID.Hex()] = exam
+	}
+	return nil
+}
+
+func (c *ExamCache) startRefreshLoop(ctx context.Context, repo repository.ExamRepository) {
+	ticker := time.NewTicker(12 * time.Hour)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			if err := c.refresh(ctx, repo); err != nil {
+				println("Failed to refresh exam cache:", err.Error())
+			}
+		case <-ctx.Done():
+			return
+		}
 	}
 }
 

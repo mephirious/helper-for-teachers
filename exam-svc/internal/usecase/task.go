@@ -5,18 +5,21 @@ import (
 	"fmt"
 	"time"
 
+	redis "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/redis/cache"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/domain"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/repository"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type taskUseCase struct {
-	taskRepo repository.TaskRepository
+	taskRepo  repository.TaskRepository
+	taskCache redis.TaskCache
 }
 
-func NewTaskUseCase(repo repository.TaskRepository) TaskUseCase {
+func NewTaskUseCase(repo repository.TaskRepository, cache redis.TaskCache) TaskUseCase {
 	return &taskUseCase{
-		taskRepo: repo,
+		taskRepo:  repo,
+		taskCache: cache,
 	}
 }
 
@@ -24,22 +27,30 @@ func (uc *taskUseCase) CreateTask(ctx context.Context, task *domain.Task) (*doma
 	task.ID = primitive.NewObjectID()
 	task.CreatedAt = time.Now()
 
-	err := uc.taskRepo.CreateTask(ctx, task)
-	if err != nil {
+	if err := uc.taskRepo.CreateTask(ctx, task); err != nil {
 		return nil, fmt.Errorf("failed to create task: %w", err)
 	}
+
+	_ = uc.taskCache.Set(ctx, *task)
 	return task, nil
 }
 
 func (uc *taskUseCase) GetTaskByID(ctx context.Context, id primitive.ObjectID) (*domain.Task, error) {
-	task, err := uc.taskRepo.GetTaskByID(ctx, id)
+	task, err := uc.taskCache.Get(ctx, id.Hex())
+	if err == nil {
+		return &task, nil
+	}
+
+	taskPtr, err := uc.taskRepo.GetTaskByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
-	if task == nil {
+	if taskPtr == nil {
 		return nil, fmt.Errorf("task not found")
 	}
-	return task, nil
+
+	_ = uc.taskCache.Set(ctx, *taskPtr)
+	return taskPtr, nil
 }
 
 func (uc *taskUseCase) GetTasksByExamID(ctx context.Context, examID primitive.ObjectID) ([]domain.Task, error) {
@@ -47,13 +58,32 @@ func (uc *taskUseCase) GetTasksByExamID(ctx context.Context, examID primitive.Ob
 }
 
 func (uc *taskUseCase) GetAllTasks(ctx context.Context) ([]domain.Task, error) {
-	return uc.taskRepo.GetAllTasks(ctx)
+	tasks, err := uc.taskCache.GetAll(ctx)
+	if err == nil && len(tasks) > 0 {
+		return tasks, nil
+	}
+
+	tasks, err = uc.taskRepo.GetAllTasks(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = uc.taskCache.SetMany(ctx, tasks)
+	return tasks, nil
 }
 
 func (uc *taskUseCase) DeleteTask(ctx context.Context, id primitive.ObjectID) error {
-	return uc.taskRepo.DeleteTask(ctx, id)
+	if err := uc.taskRepo.DeleteTask(ctx, id); err != nil {
+		return err
+	}
+	_ = uc.taskCache.Delete(ctx, id.Hex())
+	return nil
 }
 
-func (u *taskUseCase) UpdateTask(ctx context.Context, task *domain.Task) error {
-	return u.taskRepo.UpdateTask(ctx, task)
+func (uc *taskUseCase) UpdateTask(ctx context.Context, task *domain.Task) error {
+	if err := uc.taskRepo.UpdateTask(ctx, task); err != nil {
+		return err
+	}
+	_ = uc.taskCache.Set(ctx, *task)
+	return nil
 }

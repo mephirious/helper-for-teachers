@@ -3,10 +3,9 @@ package config
 import (
 	"fmt"
 	"log"
-	"os"
-	"strconv"
 	"time"
 
+	"github.com/caarlos0/env/v10"
 	"github.com/joho/godotenv"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/pkg/mongo"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/pkg/redis"
@@ -14,12 +13,12 @@ import (
 
 type (
 	Config struct {
-		Mongo   mongo.Config
-		NATS    NATSConfig
+		Mongo   mongo.Config `envPrefix:"MONGO_"`
+		NATS    NATSConfig   `envPrefix:"NATS_"`
 		Server  Server
-		Mailjet MailjetConfig
-		Redis   redis.Config
-		Gemini  GeminiConfig
+		Mailjet MailjetConfig `envPrefix:"MAILJET_"`
+		Redis   redis.Config  `envPrefix:"REDIS_"`
+		Gemini  GeminiConfig  `envPrefix:"GEMINI_"`
 	}
 
 	Server struct {
@@ -27,71 +26,37 @@ type (
 	}
 
 	GRPCServer struct {
-		Port int
-		Mode string
+		Port int    `env:"GRPC_PORT" envDefault:"8080"`
+		Mode string `env:"GIN_MODE" envDefault:"release"`
 	}
 
 	GeminiConfig struct {
-		APIKey string
+		APIKey string `env:"API_KEY"`
 	}
 
 	NATSConfig struct {
-		URL string
+		URL string `env:"URL"`
 	}
 
 	MailjetConfig struct {
-		API  string
-		KEY  string
-		From string
-		Name string
+		API  string `env:"API_KEY"`
+		KEY  string `env:"SECRET_KEY"`
+		From string `env:"FROM_EMAIL"`
+		Name string `env:"FROM_NAME"`
 	}
 )
 
 func New() (*Config, error) {
 	if err := godotenv.Load(); err != nil {
-		log.Printf("Warning: error loading .env file: %v", err)
+		log.Printf("error loading .env file: %v", err)
 	}
 
-	var cfg Config
-
-	port := getEnv("GRPC_PORT", "8080")
-	portInt, err := strconv.Atoi(port)
-	if err != nil {
-		return nil, fmt.Errorf("invalid GRPC_PORT value: %w", err)
+	cfg := &Config{}
+	if err := env.Parse(cfg); err != nil {
+		return nil, fmt.Errorf("error parsing environment: %w", err)
 	}
-	cfg.Server.GRPCServer.Port = portInt
-	cfg.Server.GRPCServer.Mode = getEnv("GIN_MODE", "release")
 
-	cfg.Mongo.Database = os.Getenv("MONGO_DB")
-	cfg.Mongo.URI = os.Getenv("MONGO_DB_URI")
-	cfg.Mongo.Username = os.Getenv("MONGO_USERNAME")
-	cfg.Mongo.Password = os.Getenv("MONGO_PASSWORD")
+	cfg.Redis.TTL = time.Duration(cfg.Redis.TTL.Seconds()) * time.Second
 
-	cfg.NATS.URL = os.Getenv("NATS_URL")
-
-	cfg.Mailjet.API = os.Getenv("MAILJET_API_KEY")
-	cfg.Mailjet.KEY = os.Getenv("MAILJET_SECRET_KEY")
-	cfg.Mailjet.From = os.Getenv("MAILJET_FROM_EMAIL")
-	cfg.Mailjet.Name = os.Getenv("MAILJET_FROM_NAME")
-
-	cfg.Gemini.APIKey = os.Getenv("GEMINI_API_KEY")
-
-	cfg.Redis.Host = os.Getenv("REDIS_HOST")
-	cfg.Redis.Password = os.Getenv("REDIS_PASSWORD")
-	ttlStr := getEnv("REDIS_TTL", "0")
-	ttlInt, err := strconv.Atoi(ttlStr)
-	if err != nil {
-		return nil, fmt.Errorf("invalid REDIS_TTL value: %w", err)
-	}
-	cfg.Redis.TTL = time.Duration(ttlInt) * time.Second
-
-	return &cfg, nil
-}
-
-func getEnv(field, defaultVal string) string {
-	value := os.Getenv(field)
-	if value == "" {
-		return defaultVal
-	}
-	return value
+	return cfg, nil
 }

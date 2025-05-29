@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/gemini"
+	inmemory "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/in-memory"
 	nats "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/nats"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/domain"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/repository"
@@ -20,14 +21,24 @@ type examUseCase struct {
 	taskRepo     repository.TaskRepository
 	geminiClient *gemini.Client
 	publisher    nats.ExamEventProducer
+	cache        *inmemory.CacheManager
 }
 
-func NewExamUseCase(examRepo repository.ExamRepository, questionRepo repository.QuestionRepository, taskRepo repository.TaskRepository, geminiClient *gemini.Client) ExamUseCase {
+func NewExamUseCase(
+	examRepo repository.ExamRepository,
+	questionRepo repository.QuestionRepository,
+	taskRepo repository.TaskRepository,
+	geminiClient *gemini.Client,
+	publisher nats.ExamEventProducer,
+	cache *inmemory.CacheManager,
+) ExamUseCase {
 	return &examUseCase{
 		examRepo:     examRepo,
 		questionRepo: questionRepo,
 		taskRepo:     taskRepo,
 		geminiClient: geminiClient,
+		publisher:    publisher,
+		cache:        cache,
 	}
 }
 
@@ -40,6 +51,8 @@ func (uc *examUseCase) CreateExam(ctx context.Context, exam *domain.Exam) (*doma
 		return nil, fmt.Errorf("failed to create exam: %w", err)
 	}
 
+	uc.cache.ExamCache.Set(*exam)
+
 	if err := uc.publisher.Push(ctx, exam, pb.ExamEventType_CREATED); err != nil {
 		log.Printf("Failed to push create event to NATS: %v", err)
 	}
@@ -48,14 +61,21 @@ func (uc *examUseCase) CreateExam(ctx context.Context, exam *domain.Exam) (*doma
 }
 
 func (uc *examUseCase) GetExamByID(ctx context.Context, id primitive.ObjectID) (*domain.Exam, error) {
-	exam, err := uc.examRepo.GetExamByID(ctx, id)
+	exam, ok := uc.cache.ExamCache.Get(id.Hex())
+	if ok {
+		return &exam, nil
+	}
+
+	examPtr, err := uc.examRepo.GetExamByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
-	if exam == nil {
+	if examPtr == nil {
 		return nil, fmt.Errorf("exam not found")
 	}
-	return exam, nil
+
+	uc.cache.ExamCache.Set(*examPtr)
+	return examPtr, nil
 }
 
 func (uc *examUseCase) GetExamsByUser(ctx context.Context, userID primitive.ObjectID) ([]domain.Exam, error) {
@@ -78,6 +98,8 @@ func (uc *examUseCase) UpdateExamStatus(ctx context.Context, id primitive.Object
 		return err
 	}
 
+	uc.cache.ExamCache.Set(*exam)
+
 	if err := uc.publisher.Push(ctx, exam, pb.ExamEventType_UPDATED); err != nil {
 		log.Printf("Failed to push update event to NATS: %v", err)
 	}
@@ -97,6 +119,8 @@ func (uc *examUseCase) UpdateExam(ctx context.Context, exam *domain.Exam) error 
 		log.Printf("Failed to reload exam for NATS publish: %v", err)
 		return nil
 	}
+
+	uc.cache.ExamCache.Set(*updated)
 
 	if err := uc.publisher.Push(ctx, updated, pb.ExamEventType_UPDATED); err != nil {
 		log.Printf("Failed to push update event to NATS: %v", err)
@@ -118,6 +142,8 @@ func (uc *examUseCase) DeleteExam(ctx context.Context, id primitive.ObjectID) er
 		return err
 	}
 
+	uc.cache.ExamCache.Delete(id.Hex())
+
 	if err := uc.publisher.Push(ctx, exam, pb.ExamEventType_DELETED); err != nil {
 		log.Printf("Failed to push delete event to NATS: %v", err)
 	}
@@ -126,51 +152,34 @@ func (uc *examUseCase) DeleteExam(ctx context.Context, id primitive.ObjectID) er
 }
 
 func (uc *examUseCase) GetAllExams(ctx context.Context) ([]domain.Exam, error) {
-	return uc.examRepo.GetAllExams(ctx)
+	exams := uc.cache.ExamCache.GetAll()
+	if len(exams) > 0 {
+		return exams, nil
+	}
+
+	exams, err := uc.examRepo.GetAllExams(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	uc.cache.ExamCache.SetMany(exams)
+	return exams, nil
 }
 
 func (uc *examUseCase) GetExamWithDetails(ctx context.Context, id primitive.ObjectID) (*domain.ExamDetailed, error) {
-	exam, err := uc.examRepo.GetExamByID(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-	if exam == nil {
-		return nil, fmt.Errorf("exam not found")
-	}
-
-	questionsResult, err := uc.questionRepo.GetQuestionsByExamID(ctx, id)
+	exam, err := uc.GetExamByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	tasksResult, err := uc.taskRepo.GetTasksByExamID(ctx, id)
+	questions, err := uc.questionRepo.GetQuestionsByExamID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	var questions []domain.Question
-	for _, q := range questionsResult {
-		questions = append(questions, domain.Question{
-			ID:            q.ID,
-			ExamID:        q.ExamID,
-			QuestionText:  q.QuestionText,
-			Options:       q.Options,
-			CorrectAnswer: q.CorrectAnswer,
-			Status:        q.Status,
-			CreatedAt:     q.CreatedAt,
-		})
-	}
-
-	var tasks []domain.Task
-	for _, t := range tasksResult {
-		tasks = append(tasks, domain.Task{
-			ID:          t.ID,
-			ExamID:      t.ExamID,
-			TaskType:    t.TaskType,
-			Description: t.Description,
-			Score:       t.Score,
-			CreatedAt:   t.CreatedAt,
-		})
+	tasks, err := uc.taskRepo.GetTasksByExamID(ctx, id)
+	if err != nil {
+		return nil, err
 	}
 
 	return &domain.ExamDetailed{
@@ -181,8 +190,8 @@ func (uc *examUseCase) GetExamWithDetails(ctx context.Context, id primitive.Obje
 		Status:      exam.Status,
 		CreatedAt:   exam.CreatedAt,
 		UpdatedAt:   exam.UpdatedAt,
-		Tasks:       tasks,
 		Questions:   questions,
+		Tasks:       tasks,
 	}, nil
 }
 
@@ -208,6 +217,8 @@ func (uc *examUseCase) GenerateExamUsingAI(ctx context.Context, userID primitive
 	if err := uc.examRepo.CreateExam(ctx, exam); err != nil {
 		return nil, fmt.Errorf("failed to save generated exam: %w", err)
 	}
+
+	uc.cache.ExamCache.Set(*exam)
 
 	var questions []domain.Question
 	for _, q := range result.Questions {

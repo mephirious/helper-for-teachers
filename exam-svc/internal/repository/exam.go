@@ -14,11 +14,13 @@ import (
 
 type examRepository struct {
 	collection *mongo.Collection
+	client     *mongo.Client
 }
 
-func NewExamRepository(db *mongo.Database) ExamRepository {
+func NewExamRepository(db *mongo.Database, client *mongo.Client) ExamRepository {
 	return &examRepository{
 		collection: db.Collection("exams"),
+		client:     client,
 	}
 }
 
@@ -91,37 +93,37 @@ func (r *examRepository) UpdateExam(ctx context.Context, exam *domain.Exam) erro
 }
 
 func (r *examRepository) DeleteExam(ctx context.Context, id primitive.ObjectID) error {
-	session, err := r.collection.Database().Client().StartSession()
+	session, err := r.client.StartSession()
 	if err != nil {
 		return fmt.Errorf("failed to start session: %w", err)
 	}
 	defer session.EndSession(ctx)
 
-	callback := func(sessCtx mongo.SessionContext) (interface{}, error) {
-		_, err := r.collection.DeleteOne(sessCtx, bson.M{"_id": id})
+	_, err = session.WithTransaction(ctx, func(sessionCtx mongo.SessionContext) (interface{}, error) {
+		_, err := r.collection.DeleteOne(sessionCtx, bson.M{"_id": id})
 		if err != nil {
 			return nil, fmt.Errorf("failed to delete exam: %w", err)
 		}
 
 		taskColl := r.collection.Database().Collection("tasks")
-		_, err = taskColl.DeleteMany(sessCtx, bson.M{"exam_id": id})
+		_, err = taskColl.DeleteMany(sessionCtx, bson.M{"exam_id": id})
 		if err != nil {
 			return nil, fmt.Errorf("failed to delete tasks: %w", err)
 		}
 
 		questionColl := r.collection.Database().Collection("questions")
-		_, err = questionColl.DeleteMany(sessCtx, bson.M{"exam_id": id})
+		_, err = questionColl.DeleteMany(sessionCtx, bson.M{"exam_id": id})
 		if err != nil {
 			return nil, fmt.Errorf("failed to delete questions: %w", err)
 		}
 
 		return nil, nil
-	}
+	})
 
-	_, err = session.WithTransaction(ctx, callback)
 	if err != nil {
 		return fmt.Errorf("transaction failed: %w", err)
 	}
+
 	return nil
 }
 

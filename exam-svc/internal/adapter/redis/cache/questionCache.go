@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/domain"
+	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/repository"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/pkg/redis"
 )
 
@@ -52,4 +53,32 @@ func (c *QuestionCache) SetMany(ctx context.Context, questions []domain.Question
 	}
 	_, err := pipe.Exec(ctx)
 	return err
+}
+
+func (c *QuestionCache) Init(ctx context.Context, repo repository.QuestionRepository) error {
+	questions, err := repo.GetAllQuestions(ctx)
+	if err != nil {
+		return err
+	}
+	return c.SetMany(ctx, questions)
+}
+
+func (c *QuestionCache) GetAll(ctx context.Context) ([]domain.Question, error) {
+	keys, err := c.client.Unwrap().Keys(ctx, "question:*").Result()
+	if err != nil {
+		return nil, err
+	}
+
+	var questions []domain.Question
+	for _, key := range keys {
+		data, err := c.client.Unwrap().Get(ctx, key).Bytes()
+		if err != nil {
+			continue
+		}
+		var q domain.Question
+		if err := json.Unmarshal(data, &q); err == nil {
+			questions = append(questions, q)
+		}
+	}
+	return questions, nil
 }

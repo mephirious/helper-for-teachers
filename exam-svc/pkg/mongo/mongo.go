@@ -11,10 +11,10 @@ import (
 )
 
 type Config struct {
-	Database string `env:"MONGO_DB"`
-	URI      string `env:"MONGO_DB_URI"`
-	Username string `env:"MONGO_USERNAME"`
-	Password string `env:"MONGO_PASSWORD"`
+	URI      string `env:"DB_URI"`
+	Database string `env:"DB"`
+	Username string `env:"USERNAME"`
+	Password string `env:"PASSWORD"`
 }
 
 var clientOptions *options.ClientOptions

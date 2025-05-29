@@ -14,19 +14,49 @@ import (
 
 type questionRepository struct {
 	collection *mongo.Collection
+	client     *mongo.Client
 }
 
-func NewQuestionRepository(db *mongo.Database) QuestionRepository {
+func NewQuestionRepository(db *mongo.Database, client *mongo.Client) QuestionRepository {
 	return &questionRepository{
 		collection: db.Collection("questions"),
+		client:     client,
 	}
 }
 
 func (r *questionRepository) CreateQuestion(ctx context.Context, question *domain.Question) error {
-	question.ID = primitive.NewObjectID()
-	question.CreatedAt = time.Now()
-	_, err := r.collection.InsertOne(ctx, dao.FromDomainQuestion(question))
-	return err
+	session, err := r.client.StartSession()
+	if err != nil {
+		return fmt.Errorf("failed to start session: %w", err)
+	}
+	defer session.EndSession(ctx)
+
+	_, err = session.WithTransaction(ctx, func(sessionCtx mongo.SessionContext) (interface{}, error) {
+		examColl := r.collection.Database().Collection("exams")
+		var examDAO dao.Exam
+		err := examColl.FindOne(sessionCtx, bson.M{"_id": question.ExamID}).Decode(&examDAO)
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				return nil, fmt.Errorf("exam with id %s not found", question.ExamID.Hex())
+			}
+			return nil, fmt.Errorf("failed to verify exam: %w", err)
+		}
+
+		question.ID = primitive.NewObjectID()
+		question.CreatedAt = time.Now()
+		_, err = r.collection.InsertOne(sessionCtx, dao.FromDomainQuestion(question))
+		if err != nil {
+			return nil, fmt.Errorf("failed to insert question: %w", err)
+		}
+
+		return nil, nil
+	})
+
+	if err != nil {
+		return fmt.Errorf("transaction failed: %w", err)
+	}
+
+	return nil
 }
 
 func (r *questionRepository) GetQuestionByID(ctx context.Context, id primitive.ObjectID) (*domain.Question, error) {
