@@ -1,0 +1,636 @@
+{
+  "info": {
+    "name": "ExamService gRPC Collection",
+    "_postman_id": "exam-service-grpc-collection",
+    "description": "Postman collection for testing the ExamService gRPC API defined in exam-svc proto. Assumes server reflection is enabled or proto file is imported. Set {{grpc_url}} to your server (e.g., localhost:50051).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Task",
+      "item": [
+        {
+          "name": "CreateTask",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"task\": {\n    \"exam_id\": \"507f1f77bcf86cd799439011\",\n    \"task_type\": \"essay\",\n    \"description\": \"Write an essay on renewable energy.\",\n    \"score\": 10\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Creates a new task for an exam.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/CreateTask",
+              "proto": "examservice.proto",
+              "metadata": [
+                {
+                  "key": "authorization",
+                  "value": "{{auth_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetTaskByID",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"507f191e810c19729de860ea\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Retrieves a task by its ID.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/GetTaskByID",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetTasksByExamID",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"exam_id\": \"507f1f77bcf86cd799439011\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Retrieves all tasks for a given exam ID.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/GetTasksByExamID",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetAllTasks",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Retrieves all tasks.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/GetAllTasks",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UpdateTask",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"task\": {\n    \"id\": \"507f191e810c19729de860ea\",\n    \"exam_id\": \"507f1f77bcf86cd799439011\",\n    \"task_type\": \"essay\",\n    \"description\": \"Updated essay on renewable energy.\",\n    \"score\": 15,\n    \"created_at\": \"2025-05-30T06:51:00Z\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Updates an existing task.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/UpdateTask",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DeleteTask",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"507f191e810c19729de860ea\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Deletes a task by its ID.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/DeleteTask",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Question",
+      "item": [
+        {
+          "name": "CreateQuestion",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": {\n    \"exam_id\": \"507f1f77bcf86cd799439011\",\n    \"question_text\": \"What is the capital of France?\",\n    \"options\": [\"Paris\", \"London\", \"Berlin\", \"Madrid\"],\n    \"correct_answer\": \"Paris\",\n    \"status\": \"active\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Creates a new question for an exam.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/CreateQuestion",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetQuestionByID",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"507f191e810c19729de860eb\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Retrieves a question by its ID.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/GetQuestionByID",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetQuestionsByExamID",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"exam_id\": \"507f1f77bcf86cd799439011\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Retrieves all questions for a given exam ID.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/GetQuestionsByExamID",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetAllQuestions",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Retrieves all questions.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/GetAllQuestions",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UpdateQuestion",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": {\n    \"id\": \"507f191e810c19729de860eb\",\n    \"exam_id\": \"507f1f77bcf86cd799439011\",\n    \"question_text\": \"What is the capital of France?\",\n    \"options\": [\"Paris\", \"London\", \"Berlin\", \"Rome\"],\n    \"correct_answer\": \"Paris\",\n    \"status\": \"active\",\n    \"created_at\": \"2025-05-30T06:51:00Z\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Updates an existing question.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/UpdateQuestion",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DeleteQuestion",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"507f191e810c19729de860eb\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Deletes a question by its ID.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/DeleteQuestion",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Exam",
+      "item": [
+        {
+          "name": "CreateExam",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"exam\": {\n    \"title\": \"Math Exam\",\n    \"description\": \"Basic math exam for grade 10\",\n    \"created_by\": \"507f191e810c19729de860ec\",\n    \"status\": \"draft\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Creates a new exam.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/CreateExam",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetExamByID",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"507f1f77bcf86cd799439011\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Retrieves an exam by its ID.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/GetExamByID",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetExamsByUser",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"507f191e810c19729de860ec\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Retrieves all exams created by a user.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/GetExamsByUser",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UpdateExam",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"exam\": {\n    \"id\": \"507f1f77bcf86cd799439011\",\n    \"title\": \"Updated Math Exam\",\n    \"description\": \"Updated math exam for grade 10\",\n    \"created_by\": \"507f191e810c19729de860ec\",\n    \"status\": \"published\",\n    \"created_at\": \"2025-05-30T06:51:00Z\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Updates an existing exam.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/UpdateExam",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UpdateExamStatus",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"507f1f77bcf86cd799439011\",\n  \"status\": \"published\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Updates the status of an exam.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/UpdateExamStatus",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DeleteExam",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"507f1f77bcf86cd799439011\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Deletes an exam by its ID.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/DeleteExam",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetAllExams",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Retrieves all exams.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/GetAllExams",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetExamWithDetails",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"507f1f77bcf86cd799439011\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Retrieves an exam with its tasks and questions.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/GetExamWithDetails",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "AI",
+      "item": [
+        {
+          "name": "GenerateExamUsingAI",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"507f191e810c19729de860ec\",\n  \"num_questions\": 5,\n  \"num_tasks\": 3,\n  \"topic\": \"Algebra\",\n  \"grade\": \"10\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{grpc_url}}",
+              "host": ["{{grpc_url}}"]
+            },
+            "description": "Generates an exam using AI based on topic and grade.",
+            "method_type": "grpc",
+            "grpc": {
+              "method": "examservice.ExamService/GenerateExamUsingAI",
+              "proto": "examservice.proto",
+              "metadata": []
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "grpc_url",
+      "value": "localhost:50051",
+      "description": "gRPC server URL (e.g., localhost:50051)"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "description": "Optional authentication token for gRPC metadata"
+    }
+  ]
+}

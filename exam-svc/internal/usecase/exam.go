@@ -106,7 +106,7 @@ func (uc *examUseCase) UpdateExamStatus(ctx context.Context, id primitive.Object
 	}
 
 	if status == "verified" && uc.mailjet != nil {
-		if err := uc.mailjet.SendTemplateEmail("admin@example.com", "Admin", mailjet.ExamVerifiedTemplate); err != nil {
+		if err := uc.mailjet.SendTemplateEmail("hardwarerump04@gmail.com", "Admin", mailjet.ExamVerifiedTemplate); err != nil {
 			log.Printf("Failed to send exam verified email: %v", err)
 		} else {
 			log.Printf("Sent exam verified email for exam ID: %s", id.Hex())
@@ -136,7 +136,7 @@ func (uc *examUseCase) UpdateExam(ctx context.Context, exam *domain.Exam) error 
 	}
 
 	if exam.Status == "verified" && uc.mailjet != nil {
-		if err := uc.mailjet.SendTemplateEmail("admin@example.com", "Admin", mailjet.ExamVerifiedTemplate); err != nil {
+		if err := uc.mailjet.SendTemplateEmail("hardwarerump04@gmail.com", "Admin", mailjet.ExamVerifiedTemplate); err != nil {
 			log.Printf("Failed to send exam verified email: %v", err)
 		} else {
 			log.Printf("Sent exam verified email for exam ID: %s", exam.ID.Hex())
