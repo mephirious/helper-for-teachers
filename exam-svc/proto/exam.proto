@@ -1,0 +1,222 @@
+syntax = "proto3";
+
+package examservice;
+
+option go_package = "github.com/mephirious/helper-for-teachers/services/exam-svc/pb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service ExamService {
+  rpc CreateTask(CreateTaskRequest) returns (TaskResponse) {}
+  rpc GetTaskByID(GetTaskByIDRequest) returns (TaskResponse) {}
+  rpc GetTasksByExamID(GetTasksByExamIDRequest) returns (TasksResponse) {}
+  rpc GetAllTasks(google.protobuf.Empty) returns (TasksResponse) {}
+  rpc UpdateTask(UpdateTaskRequest) returns (google.protobuf.Empty) {}
+  rpc DeleteTask(DeleteTaskRequest) returns (google.protobuf.Empty) {}
+
+  rpc CreateQuestion(CreateQuestionRequest) returns (QuestionResponse) {}
+  rpc GetQuestionByID(GetQuestionByIDRequest) returns (QuestionResponse) {}
+  rpc GetQuestionsByExamID(GetQuestionsByExamIDRequest) returns (QuestionsResponse) {}
+  rpc GetAllQuestions(google.protobuf.Empty) returns (QuestionsResponse) {}
+  rpc UpdateQuestion(UpdateQuestionRequest) returns (google.protobuf.Empty) {}
+  rpc DeleteQuestion(DeleteQuestionRequest) returns (google.protobuf.Empty) {}
+
+  rpc CreateExam(CreateExamRequest) returns (ExamResponse) {}
+  rpc GetExamByID(GetExamByIDRequest) returns (ExamResponse) {}
+  rpc GetExamsByUser(GetExamsByUserRequest) returns (ExamsResponse) {}
+  rpc UpdateExam(UpdateExamRequest) returns (google.protobuf.Empty) {}
+  rpc UpdateExamStatus(UpdateExamStatusRequest) returns (google.protobuf.Empty) {}
+  rpc DeleteExam(DeleteExamRequest) returns (google.protobuf.Empty) {}
+  rpc GetAllExams(google.protobuf.Empty) returns (ExamsResponse) {}
+  rpc GetExamWithDetails(GetExamWithDetailsRequest) returns (ExamDetailedResponse) {}
+  rpc GenerateExamUsingAI(GenerateExamUsingAIRequest) returns (ExamDetailedResponse) {}
+}
+
+enum ExamEventType {
+  EXAM_CREATED = 0;
+  EXAM_UPDATED = 1;
+  EXAM_DELETED = 2;
+}
+
+message Task {
+  string id = 1;
+  string exam_id = 2;
+  string task_type = 3;
+  string description = 4;
+  float score = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+message Question {
+  string id = 1;
+  string exam_id = 2;
+  string question_text = 3;
+  repeated string options = 4;
+  string correct_answer = 5;
+  string status = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+message Exam {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string created_by = 4;
+  string status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message ExamDetailed {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string created_by = 4;
+  string status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  repeated Task tasks = 8;
+  repeated Question questions = 9;
+}
+
+message CreateTaskRequest {
+  Task task = 1;
+}
+
+message GetTaskByIDRequest {
+  string id = 1;
+}
+
+message GetTasksByExamIDRequest {
+  string exam_id = 1;
+}
+
+message TasksResponse {
+  repeated Task tasks = 1;
+}
+
+message UpdateTaskRequest {
+  Task task = 1;
+}
+
+message DeleteTaskRequest {
+  string id = 1;
+}
+
+message CreateQuestionRequest {
+  Question question = 1;
+}
+
+message GetQuestionByIDRequest {
+  string id = 1;
+}
+
+message GetQuestionsByExamIDRequest {
+  string exam_id = 1;
+}
+
+message QuestionsResponse {
+  repeated Question questions = 1;
+}
+
+message UpdateQuestionRequest {
+  Question question = 1;
+}
+
+message DeleteQuestionRequest {
+  string id = 1;
+}
+
+message CreateExamRequest {
+  Exam exam = 1;
+}
+
+message GetExamByIDRequest {
+  string id = 1;
+}
+
+message GetExamsByUserRequest {
+  string user_id = 1;
+}
+
+message ExamsResponse {
+  repeated Exam exams = 1;
+}
+
+message UpdateExamRequest {
+  Exam exam = 1;
+}
+
+message UpdateExamStatusRequest {
+  string id = 1;
+  string status = 2;
+}
+
+message DeleteExamRequest {
+  string id = 1;
+}
+
+message GetExamWithDetailsRequest {
+  string id = 1;
+}
+
+message GenerateExamUsingAIRequest {
+  string user_id = 1;
+  int32 num_questions = 2;
+  int32 num_tasks = 3;
+  string topic = 4;
+  string grade = 5;
+}
+
+message TaskResponse {
+  string id = 1;
+  string exam_id = 2;
+  string task_type = 3;
+  string description = 4;
+  float score = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+message QuestionResponse {
+  string id = 1;
+  string exam_id = 2;
+  string question_text = 3;
+  repeated string options = 4;
+  string correct_answer = 5;
+  string status = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+message ExamResponse {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string created_by = 4;
+  string status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message ExamDetailedResponse {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string created_by = 4;
+  string status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  repeated Task tasks = 8;
+  repeated Question questions = 9;
+}
+
+message ExamEvent {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string created_by = 4;
+  string status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  ExamEventType event_type = 8;
+}

@@ -1,0 +1,47 @@
+services:
+  mongo:
+    image: mongo:latest
+    container_name: final-mongo
+    ports:
+      - "27027:27017"
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - default
+
+  redis:
+    image: redis:7.0
+    container_name: final-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+
+  nats:
+    image: nats:latest
+    container_name: final-nats
+    ports:
+      - "4222:4222"
+    command: "--jetstream"
+
+  exam-svc:
+    build:
+      context: ./exam-svc
+      dockerfile: Dockerfile
+    container_name: exam-svc
+    depends_on:
+      - mongo
+      - redis
+      - nats
+    ports:
+      - "4001:4001"
+    env_file:
+      - ./exam-svc/.env
+    volumes:
+      - ./exam-svc/.env:/app/.env
+
+volumes:
+  mongo-data:
+  redis-data:
