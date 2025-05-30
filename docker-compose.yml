@@ -1,19 +1,6 @@
 version: '3.8'
 
 services:
-
-  # gateway:
-  #   container_name: gateway-service
-  #   build:
-  #     context: ./services
-  #     dockerfile: Dockerfile.gateway
-  #   ports:
-  #     - "80:8080"
-  #   env_file:
-  #     - ./services/gateway/.env.prod
-  #   depends_on:
-  #     - managers_service
-
   managers_service:
     container_name: managers-service
     build:
@@ -36,15 +23,107 @@ services:
     ports:
       - 5432:5432
 
-  nats:
-    image: nats:latest
-    container_name: nats-server
+  mongo:
+    image: mongo:latest
+    container_name: final-mongo
     ports:
-      - "4222:4222"
-    command: "-DV"
+      - "27027:27017"
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongo-data:/data/db
     networks:
       - default
 
+  redis:
+    image: redis:7.0
+    container_name: final-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+
+  nats:
+    image: nats:latest
+    container_name: final-nats
+    ports:
+      - "4222:4222"
+    command: "--jetstream"
+
+  exam-svc:
+    build:
+      context: ./exam-svc
+      dockerfile: Dockerfile
+    container_name: exam-svc
+    depends_on:
+      - mongo
+      - redis
+      - nats
+    ports:
+      - "4001:4001"
+      - "9090:9090"
+    env_file:
+      - ./exam-svc/.env
+    volumes:
+      - ./exam-svc/.env:/app/.env
+
+  prometheus:
+    image: prom/prometheus
+    container_name: exam-prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9091:9090"
+    networks:
+      - app-net
+
+  blackbox:
+    image: prom/blackbox-exporter:latest
+    container_name: exam-blackbox
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./blackbox.yml:/etc/blackbox_exporter/config.yml
+    networks:
+      - app-net
+
+  grafana:
+    image: grafana/grafana-oss
+    container_name: exam-grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=secret
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - app-net
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: exam-node-exporter
+    ports:
+      - "9100:9100"
+    restart: unless-stopped
+    networks:
+      - app-net
+
+  jaeger:
+    image: jaegertracing/all-in-one
+    container_name: jaeger
+    ports:
+      - "16686:16686"
+      - "4318:4318"
+    command: ["--collector.otlp.enabled=true", "--collector.otlp.http.host-port=4318"]
+
+volumes:
+  mongo-data:
+  redis-data:
+  grafana-data:
+
 networks:
-  default:
+  app-net:
     driver: bridge

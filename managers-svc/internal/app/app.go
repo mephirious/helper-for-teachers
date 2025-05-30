@@ -51,7 +51,7 @@ func (s *APIServer) Run() error {
 	if err != nil {
 		s.logger.Error("SMTP ERROR", "error", err.Error())
 	}
-	service := service.NewManagersService(time.Now, s.logger, courseRepo, groupRepo, cache, instructorsRepo, publisher, NATS)
+	service := service.NewManagersService(time.Now, s.logger, courseRepo, groupRepo, cache, instructorsRepo, publisher, SMTP)
 
 	return grpc.StartGRPCServer(s.cfg.Server.Port, service, s.logger)
 }
