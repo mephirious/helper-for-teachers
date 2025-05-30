@@ -1,0 +1,11 @@
+FROM golang:1.24
+
+WORKDIR /app
+
+COPY managers/ ./managers/
+
+WORKDIR /app/managers
+
+RUN go build -o service ./cmd
+
+CMD ["./service"]

@@ -1,0 +1,147 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+package managers;
+
+option go_package = "internal/grpc;grpc";
+
+
+service Managers {
+  // ─── Courses ─────────────────────────────────────────────────────────
+  rpc CreateCourse(CreateCourseReq)    returns (CourseResp);
+  rpc GetCourse(GetByIdReq)            returns (CourseResp);
+  rpc UpdateCourse(UpdateCourseReq)    returns (CourseResp);
+  rpc DeleteCourse(GetByIdReq)         returns (google.protobuf.Empty);
+  rpc ListCourses(google.protobuf.Empty) returns (ListCoursesResp);
+
+  // ─── Groups (sections) ──────────────────────────────────────────────
+  rpc CreateGroup(CreateGroupReq)      returns (GroupResp);
+  rpc GetGroup(GetByIdReq)             returns (GroupResp);
+  rpc UpdateGroup(UpdateGroupReq)      returns (GroupResp);
+  rpc DeleteGroup(GetByIdReq)          returns (google.protobuf.Empty);
+  rpc ListGroupsByCourse(ListByCourseReq) returns (ListGroupsResp);
+
+  // ─── Group Membership ────────────────────────────────────────────────
+  rpc AddGroupMember(AddMemberReq)     returns (GroupMemberResp);
+  rpc RemoveGroupMember(RemoveMemberReq) returns (google.protobuf.Empty);
+  rpc ListGroupMembers(ListByGroupReq) returns (ListGroupMembersResp);
+
+  // ─── Course-level Instructors ───────────────────────────────────────
+  rpc AssignCourseInstructor(AssignInstructorReq) returns (CourseInstructorResp);
+  rpc RemoveCourseInstructor(RemoveInstructorReq) returns (google.protobuf.Empty);
+  rpc ListCourseInstructors(ListByCourseReq)      returns (ListCourseInstructorsResp);
+
+  // ─── Cross-Service Lookups ──────────────────────────────────────────
+  rpc IsUserGroupTeacher(CheckMemberReq)    returns (BoolResp);
+  rpc ListTeachersByCourse(ListByCourseReq) returns (ListCourseInstructorsResp);
+  rpc ListStudentsByGroup(ListByGroupReq)   returns (ListGroupMembersResp);
+}
+
+// ─── Messages ───────────────────────────────────────────────────────────
+message GetByIdReq {
+  string id = 1;
+}
+
+message CheckMemberReq {
+  string    group_id = 1;
+  string    user_id  = 2;
+  MemberRole role    = 3;
+}
+
+message ListByCourseReq {
+  string course_id = 1;
+}
+
+message ListByGroupReq {
+  string group_id = 1;
+}
+
+message BoolResp {
+  bool ok = 1;
+}
+
+// Course
+message CreateCourseReq {
+  string name = 1;
+}
+message UpdateCourseReq {
+  string id   = 1;
+  string name = 2;
+}
+message CourseResp {
+  string id   = 1;
+  string name = 2;
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}
+message ListCoursesResp {
+  repeated CourseResp courses = 1;
+}
+
+// Group
+message CreateGroupReq {
+  string course_id = 1;
+  string name      = 2;
+}
+message UpdateGroupReq {
+  string id         = 1;
+  string name       = 2;
+  google.protobuf.Timestamp expire_at = 3;
+}
+message GroupResp {
+  string id         = 1;
+  string course_id  = 2;
+  string name       = 3;
+  google.protobuf.Timestamp expire_at = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+message ListGroupsResp {
+  repeated GroupResp groups = 1;
+}
+
+// GroupMember
+enum MemberRole { STUDENT = 0; TEACHER = 1; }
+message AddMemberReq {
+  string group_id = 1;
+  string user_id  = 2;
+  MemberRole role = 3;
+}
+message RemoveMemberReq {
+  string group_id = 1;
+  string user_id  = 2;
+  MemberRole role = 3;
+}
+message GroupMemberResp {
+  string id       = 1;
+  string group_id = 2;
+  string user_id  = 3;
+  MemberRole role = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+message ListGroupMembersResp {
+  repeated GroupMemberResp members = 1;
+}
+
+// CourseInstructor
+message AssignInstructorReq {
+  string course_id = 1;
+  string user_id   = 2;
+}
+message RemoveInstructorReq {
+  string course_id = 1;
+  string user_id   = 2;
+}
+message CourseInstructorResp {
+  string id        = 1;
+  string course_id = 2;
+  string user_id   = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+message ListCourseInstructorsResp {
+  repeated CourseInstructorResp instructors = 1;
+}
