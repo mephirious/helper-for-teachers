@@ -9,6 +9,8 @@ import (
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/usecase"
 	pb "github.com/mephirious/helper-for-teachers/services/exam-svc/proto"
 
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -27,7 +29,9 @@ func NewGRPCServer(cfg config.Config, taskUC usecase.TaskUseCase, questionUC use
 		return nil, fmt.Errorf("failed to listen on %s: %w", addr, err)
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
+	)
 	examHandler := handler.NewExamHandler(taskUC, questionUC, examUC)
 
 	pb.RegisterExamServiceServer(s, examHandler)

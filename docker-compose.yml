@@ -37,11 +37,69 @@ services:
       - nats
     ports:
       - "4001:4001"
+      - "9090:9090"
     env_file:
       - ./exam-svc/.env
     volumes:
       - ./exam-svc/.env:/app/.env
 
+  prometheus:
+    image: prom/prometheus
+    container_name: exam-prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9091:9090"
+    networks:
+      - app-net
+
+  blackbox:
+    image: prom/blackbox-exporter:latest
+    container_name: exam-blackbox
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./blackbox.yml:/etc/blackbox_exporter/config.yml
+    networks:
+      - app-net
+
+  grafana:
+    image: grafana/grafana-oss
+    container_name: exam-grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=secret
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - app-net
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: exam-node-exporter
+    ports:
+      - "9100:9100"
+    restart: unless-stopped
+    networks:
+      - app-net
+
+  jaeger:
+    image: jaegertracing/all-in-one
+    container_name: jaeger
+    ports:
+      - "16686:16686"  
+      - "4318:4318"    
+    command: ["--collector.otlp.enabled=true", "--collector.otlp.http.host-port=4318"]
+
 volumes:
   mongo-data:
   redis-data:
+  grafana-data:
+
+networks:
+  app-net:
+    driver: bridge

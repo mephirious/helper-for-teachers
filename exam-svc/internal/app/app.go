@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,6 +15,7 @@ import (
 	service "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/grpc"
 	memo "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/in-memory"
 	mail "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/mailjet"
+	observability "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/metrics"
 	natsAdapter "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/nats"
 	cache "github.com/mephirious/helper-for-teachers/services/exam-svc/internal/adapter/redis/cache"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/internal/repository"
@@ -21,6 +23,8 @@ import (
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/pkg/mongo"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/pkg/nats"
 	"github.com/mephirious/helper-for-teachers/services/exam-svc/pkg/redis"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/genai"
 )
 
@@ -32,10 +36,18 @@ type App struct {
 	redis      *redis.Client
 	nats       *nats.Client
 	gemini     *genai.Client
+	tracer     trace.TracerProvider
 }
 
 func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	log.Printf("starting %v service", serviceName)
+
+	tracer, err := observability.InitTracer(ctx, "exam-svc", "jaeger:4318")
+	if err != nil {
+		log.Printf("failed to initialize tracer: %v", err)
+		return nil, fmt.Errorf("tracer: %w", err)
+	}
+	log.Println("initialized OpenTelemetry tracer")
 
 	log.Println("connecting to MongoDB", "uri", cfg.Mongo.URI)
 	mongoClient, err := mongo.NewDB(ctx, cfg.Mongo)
@@ -70,6 +82,13 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		return nil, fmt.Errorf("gemini: %w", err)
 	}
 	log.Println("initialized Gemini client")
+
+	_, err = observability.InitMetrics(serviceName)
+	if err != nil {
+		log.Printf("failed to initialize Prometheus metrics: %v", err)
+		return nil, fmt.Errorf("metrics: %w", err)
+	}
+	log.Println("initialized Prometheus metrics")
 
 	mongoDB, err := mongo.NewDB(ctx, cfg.Mongo)
 	if err != nil {
@@ -117,6 +136,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		redis:      redisClient,
 		nats:       natsConn,
 		gemini:     geminiClient,
+		tracer:     tracer,
 	}, nil
 }
 
@@ -151,6 +171,15 @@ func (a *App) Run() error {
 
 	shutdownCh := make(chan os.Signal, 1)
 	signal.Notify(shutdownCh, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		http.Handle("/metrics", promhttp.Handler())
+		if err := http.ListenAndServe(":9090", nil); err != nil {
+			log.Printf("metrics server failed: %v", err)
+			errCh <- err
+		}
+	}()
+	log.Println("metrics server started on :9090")
 
 	select {
 	case err := <-errCh:
