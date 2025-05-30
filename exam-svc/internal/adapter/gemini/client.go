@@ -10,6 +10,10 @@ import (
 	"google.golang.org/genai"
 )
 
+type ExamGenerator interface {
+	GenerateExam(ctx context.Context, numQuestions, numTasks int, grade, topic string) (*ExamGenResult, error)
+}
+
 type Client struct {
 	client    *genai.Client
 	modelName string

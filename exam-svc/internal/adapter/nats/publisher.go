@@ -15,6 +15,10 @@ import (
 	pb "github.com/mephirious/helper-for-teachers/services/exam-svc/proto"
 )
 
+type EventPusher interface {
+	Push(ctx context.Context, exam *domain.Exam, eventType pb.ExamEventType) error
+}
+
 const PushTimeout = time.Second * 30
 
 type ExamEventProducer struct {
